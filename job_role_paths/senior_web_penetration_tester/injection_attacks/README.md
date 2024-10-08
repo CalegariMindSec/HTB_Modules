@@ -24,6 +24,15 @@ In more detail, this module covers the following:
 
 [XML Path Language (XPath)](https://www.w3.org/TR/xpath-3/) is a query language for [Extensible Markup Language (XML)](https://datatracker.ietf.org/doc/html/rfc5364) data, similar to how SQL is a query language for databases. As such,  XPath is used to query data from XML documents. Web applications that  need to retrieve data stored in an XML format thus rely on XPath to  retrieve the required data. [XPath Injection](https://owasp.org/www-community/attacks/XPATH_Injection) vulnerabilities arise when user input is inserted into XPath queries  without proper sanitization. Like SQLi vulnerabilities, XPath injection  jeopardizes the entire data as successfully exploiting XPath injection  allows an attacker to retrieve the entire XML document.
 
+**References**:
+
+- https://www.netspi.com/blog/technical-blog/web-application-pentesting/exploiting-xpath-injection-weaknesses/
+- https://book.hacktricks.xyz/pentesting-web/xpath-injection
+- https://bugbug.io/blog/testing-frameworks/the-ultimate-xpath-cheat-sheet/
+- https://owasp.org/www-community/attacks/Blind_XPath_Injection
+- https://www.wallarm.com/what/xpath-injection-attack
+- https://github.com/orf/xcat
+
 #### LDAP Injection
 
 [Lightweight Directory Access Protocol (LDAP)](https://www.rfc-editor.org/rfc/rfc4511) is a protocol used to access directory servers such as `Active Directory` (`AD`). Web applications often use LDAP queries to enable integration with AD  services. For instance, LDAP can enable AD users to authenticate to the  web application. LDAP injection vulnerabilities arise when user input is inserted into search filters without proper sanitization. This can lead to authentication bypasses if LDAP authentication is incorrectly  implemented. Additionally, LDAP injection can lead to loss of data.
