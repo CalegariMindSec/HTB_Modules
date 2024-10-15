@@ -1,5 +1,7 @@
 # Injection Attacks
 
+**Module Link**: https://academy.hackthebox.com/module/details/204
+
 ### Module Summary
 
 There are many injection vulnerabilities, the most famous ones being  SQL injection, cross-site scripting, and command injection. While these  are certainly the most common in real-world web applications, other  not-very-known injection vulnerabilities exist. Since these injection  vulnerabilities are generally less common and less known, developers are more likely not to be aware of them and, therefore, be oblivious to the mitigations against them. If we can find a website that utilizes XPath, LDAP, or PDF generation libraries, testing it against these attacks  might allow us to move forward in our engagements.
