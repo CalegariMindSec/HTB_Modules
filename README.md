@@ -4,7 +4,7 @@ My repo for HTB academy modules.
 
 ## Modules
 
-- [Introduction to Python 3]()
+- [Introduction to Python 3](modules/Introduction to Python 3)
 
 ## Job Role Paths
 
