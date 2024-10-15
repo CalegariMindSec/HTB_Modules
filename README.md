@@ -6,4 +6,4 @@ My repo for HTB academy modules.
 
 ### --> Senior Web Penetration Tester
 
-1. ##### Injection Attacks
+1. ##### [Injection Attacks](job_role_paths/senior_web_penetration_tester/injection_attacks)
