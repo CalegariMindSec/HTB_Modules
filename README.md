@@ -2,6 +2,10 @@
 
 My repo for HTB academy modules.
 
+## Modules
+
+- [Introduction to Python 3]()
+
 ## Job Role Paths
 
 ### --> Senior Web Penetration Tester
