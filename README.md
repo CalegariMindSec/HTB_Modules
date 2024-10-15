@@ -4,7 +4,8 @@ My repo for HTB academy modules.
 
 ## Modules
 
-- [Introduction to Python 3]("modules/Introduction to Python 3")
+- [Introduction to Python 3](https://github.com/CalegariMindSec/HTB_Modules/tree/main/modules/Introduction%20to%20Python%203)
+- [Web Attacks](modules/Web_Attacks)
 
 ## Job Role Paths
 
