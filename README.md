@@ -12,3 +12,5 @@ My repo for HTB academy modules.
 ### --> Senior Web Penetration Tester
 
 1. ##### [Injection Attacks](job_role_paths/senior_web_penetration_tester/injection_attacks)
+
+1. [Introduction to NoSQL Injection](job_role_paths/senior_web_penetration_tester/intro_to_nosql_injection)
