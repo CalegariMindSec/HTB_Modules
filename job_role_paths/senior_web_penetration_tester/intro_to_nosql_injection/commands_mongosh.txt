@@ -1,0 +1,3 @@
+show databases - Lista dbs
+show collections - Lista Collections
+db.accounts.find({$and: [{firstName: {$regex: /^R.*/}}, {$where: 'this.firstName.length === 6'}, {lastName: {$regex: /^D.*/}}]}) - Resposta lab 1
