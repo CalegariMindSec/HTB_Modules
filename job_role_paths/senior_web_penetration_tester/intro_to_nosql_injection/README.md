@@ -18,3 +18,8 @@ In this module, we will cover the following:
 ## What is NoSQL Injection?
 
 When `user input` is incorporated into a NoSQL query `without being properly sanitized` first, `NoSQL injection` may occur. If an attacker can control part of the query, they may subvert the logic and get the server to carry out `unintended actions / return unintended results`. Since NoSQL has no standardized query language like SQL [does](https://www.iso.org/obp/ui/#iso:std:iso-iec:9075:-1:ed-5:v1:en), NoSQL injection attacks look different in the various NoSQL implementation.
+
+**References**:
+
+- https://portswigger.net/web-security/nosql-injection
+- https://book.hacktricks.xyz/pentesting-web/nosql-injection
