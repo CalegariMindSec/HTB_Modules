@@ -65,6 +65,11 @@ The [Broken Authentication](https://academy.hackthebox.com/module/details/80) mo
 
 [JSON Web Token (JWT)](https://datatracker.ietf.org/doc/html/rfc7519) is a format for transmitting cryptographically secure data. While JWTs  are not directly tied to authentication in web applications, many web  applications use JWTs as a stateless session token. These tokens,  encoded as JSON objects, are a secure and efficient way to transmit  information between a client and a server. JWTs consist of three main  parts: a header, a payload, and a signature, enabling authentication,  authorization, and stateless information exchange. They have become  popular for implementing token-based authentication and authorization  mechanisms due to their simplicity, flexibility, and widespread support  across different programming languages and platforms.
 
+**References**:
+
+- https://portswigger.net/web-security/jwt
+- https://github.com/CalegariMindSec/My_Notes/blob/main/JWT_Vulns.md
+
 ------
 
 ## OAuth
