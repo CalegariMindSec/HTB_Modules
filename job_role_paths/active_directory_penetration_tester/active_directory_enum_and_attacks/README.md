@@ -173,3 +173,91 @@ Now that we have our scope clearly defined for this module, we can  dive into ex
 - Google Dorks
 
 # Initial Enumeration of the Domain
+
+**Tools:**
+
+- Wireshark
+- Tcpdump
+- Responder
+- fping
+- Nmap
+- kerbrute
+
+**Commands:**
+
+Responder:
+
+```bash
+sudo responder -I {INTERFACE} -A
+```
+
+fping:
+
+```bash
+fping -asgq {IP RANGE}
+```
+
+Nmap:
+
+```bash
+sudo nmap -v -A -iL hosts.txt -oN /home/htb-student/Documents/host-enum
+```
+
+kerbrute:
+
+```bash
+kerbrute userenum -d {DOMAIN} --dc {DC IP} {WORDLIST} -o valid_ad_users
+```
+
+# Sniffing out a Foothold
+
+## LLMNR/NBT-NS Poisoning - from Linux
+
+**Tools:**
+
+- responder
+- hashcat
+- john
+- Inveigh
+- Metasploit
+
+**Commands:**
+
+hashcat:
+
+```bash
+hashcat -m {Mode Number} {File} {Wordlist}
+Example: hashcat -m 5600 hash.txt /usr/share/wordlists/rockyou.txt
+```
+
+**Note:** Mode list --> https://hashcat.net/wiki/doku.php?id=example_hashes
+
+## LLMNR/NBT-NS Poisoning - from Windows
+
+**Tools:**
+
+- [Inveigh](https://github.com/Kevin-Robertson/Inveigh)
+
+**Commands:**
+
+xfreerdp:
+
+```bash
+xfreerdp /u:'{USER}' /p:'{PASS}' /v:{IP}
+Example: xfreerdp /u:'htb-student' /p:'Academy_student_AD!' /v:10.129.180.243
+```
+
+Inveigh.ps1 - OUTDATED:
+
+```powershell
+Invoke-Inveigh Y -NBNS Y -ConsoleOutput Y -FileOutput Y
+Example: Invoke-Inveigh Y -NBNS Y -ConsoleOutput Y -FileOutput Y
+```
+
+Inveigh.exe:
+
+```powershell
+.\Inveigh.exe
+```
+
+# Password Spraying Overview
