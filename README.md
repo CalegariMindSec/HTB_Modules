@@ -17,5 +17,6 @@ My repo for HTB academy modules.
 
 1. [Attacking Authentication Mechanisms](job_role_paths/senior_web_penetration_tester/intro_to_auth_mechanisms)
 
-
 ### --> Active Directory Penetration Tester
+
+1. [Active Directory Enumeration & Attacks](job_role_paths/active_directory_penetration_tester/active_directory_enum_and_attacks)
