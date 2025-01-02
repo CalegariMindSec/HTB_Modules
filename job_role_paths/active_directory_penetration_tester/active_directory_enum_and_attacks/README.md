@@ -358,7 +358,7 @@ crackmapexec smb {IP} --users
 ldapsearch - without creds:
 
 ```bash
-ldapsearch -h {IP} -x -b "DC=INLANEFREIGHT,DC=LOCAL" -s sub "(&(objectclass=user))"  | grep sAMAccountName: | cut -f2 -d" "
+ldapsearch -h {IP} -x -b "DC={DOMAIN},DC=LOCAL" -s sub "(&(objectclass=user))"  | grep sAMAccountName: | cut -f2 -d" "
 ```
 
 windapsearch - without creds:
@@ -421,5 +421,125 @@ DomainPasswordSpray - host domain-joined:
 
 ```powershell
 Invoke-DomainPasswordSpray -Password {PASS} -OutFile {FILE_NAME} -ErrorAction SilentlyContinue
+```
+
+# Deeper Down the Rabbit Hole
+
+## Enumerating Security Controls
+
+**Tools:**
+
+- [LAPSToolkit](https://github.com/leoloobeek/LAPSToolkit)
+
+**Commands:**
+
+Get-MpComputerStatus - Checking the Status of Defender:
+
+```powershell
+Get-MpComputerStatus
+```
+
+Get-AppLockerPolicy:
+
+```powershell
+Get-AppLockerPolicy -Effective | select -ExpandProperty RuleCollections
+```
+
+PowerShell Constrained Language Mode Enumeration:
+
+```powershell
+$ExecutionContext.SessionState.LanguageMode
+```
+
+Find-LAPSDelegatedGroups:
+
+```powershell
+Find-LAPSDelegatedGroups
+```
+
+Find-AdmPwdExtendedRights (checks the rights on each computer with LAPS enabled for any groups with read access and users with "All Extended Rights." Users with "All  Extended Rights" can read LAPS passwords and may be less protected than  users in delegated groups, so this is worth checking for.):
+
+```powershell
+Find-AdmPwdExtendedRights
+```
+
+Get-LAPSComputers (search for computers that have LAPS enabled when passwords expire, and  even the randomized passwords in cleartext if our user has access.):
+
+```powershell
+Get-LAPSComputers
+```
+
+## Credentialed Enumeration - from Linux
+
+**Tools:**
+
+- Crackmapexec
+- SMBmap
+- rpcclient
+- wmiexec
+- psexec
+- windapsearch
+- bloodhound
+
+**Commands:**
+
+CME - Domain User Enumeration:
+
+```bash
+crackmapexec smb {IP} -u {USER} -p {PASS} --users
+```
+
+CME - Domain Group Enumeration:
+
+```bash
+crackmapexec smb {IP} -u {USER} -p {PASS} --groups
+```
+
+CME - Logged On Users:
+
+```bash
+crackmapexec smb {IP} -u {USER} -p {PASS} --loggedon-users
+```
+
+CME - Share Searching:
+
+```bash
+crackmapexec smb {IP} -u {USER} -p {PASS} --shares
+```
+
+SMBmap:
+
+```bash
+smbmap -u {USER} -p {PASS} -d {DOMAIN} -H {IP}
+```
+
+rpcclient - Null Session:
+
+```bash
+rpcclient -U "" -N {IP}
+```
+
+psexec:
+
+```bash
+psexec.py {DOMAIN}/{USER}:'{PASS}'@{IP}  
+```
+
+wmiexec:
+
+```bash
+wmiexec.py {DOMAIN}/{USER}:'{PASS}'@{IP}  
+```
+
+windapsearch - Enumerate Domain Admins:
+
+```bash
+windapsearch.py --dc-ip {IP} -u {USER}@{DOMAIN} -p {PASS} --da
+```
+
+windapsearch - Privileged Users:
+
+```bash
+windapsearch.py --dc-ip {IP} -u {USER}@{DOMAIN} -p {PASS} -PU
 ```
 
