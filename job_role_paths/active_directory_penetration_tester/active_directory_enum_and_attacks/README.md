@@ -2673,3 +2673,11 @@ In this section we covered three recent attacks:
 Each of these attacks can be performed with either standard domain  user access (NoPac and PrintNightmare) or without any type of  authentication to the domain at all (PetitPotam), and can lead to domain compromise relatively easily. There are multiple ways to perform each  attack, and we covered a few. Active Directory attacks continue to  evolve, and these are surely not the last extremely high-impact attack  vectors that we will see. When these types of attacks are released, we  should strive to build a small lab environment to practice them in, so  we are ready to use them safely and effectively in a real-world  engagement should the opportunity arise. Understanding how to set up  these attacks in a lab can also significantly increase our understanding of the issue and help us to better advise our clients on the impact,  remediation, and detections. This was just a tiny glimpse into the world of attacking AD CS, which could be an entire module.
 
 In the next section, we'll talk through various other issues that we  see from time to time in Active Directory environments that could help  us further our access or lead to additional findings for our final  client report.
+
+## Miscellaneous Misconfigurations
+
+**Tools:**
+
+- [Exchange-AD-Privesc](https://github.com/gdedrouas/Exchange-AD-Privesc)
+
+**Commands:**
