@@ -13,9 +13,9 @@ My repo for HTB academy modules.
 
 **Summary:**
 
-- SOC Analyst (CDSA - HTB Certified Defensive Security Analyst)
-- Active Directory Penetration Tester (CAPE - HTB Certified Active Directory Pentesting Expert)
-- Senior Web Penetration Tester (CWEE - HTB Certified Web Exploitation Expert)
+- [SOC Analyst (CDSA - HTB Certified Defensive Security Analyst)](#soc-analyst-cdsa---htb-certified-defensive-security-analyst)
+- [Active Directory Penetration Tester (CAPE - HTB Certified Active Directory Pentesting Expert)](#active-directory-penetration-tester-cape---htb-certified-active-directory-pentesting-expert)
+- [Senior Web Penetration Tester (CWEE - HTB Certified Web Exploitation Expert)](#senior-web-penetration-tester-cwee---htb-certified-web-exploitation-expert)
 
 ### SOC Analyst (CDSA - HTB Certified Defensive Security Analyst)
 
