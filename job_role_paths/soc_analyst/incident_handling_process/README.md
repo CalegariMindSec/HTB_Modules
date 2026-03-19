@@ -22,10 +22,10 @@ A firm grasp of the following module can be considered a prerequisite for succes
 
 # Sections 
 
-- Introduction
-- The Incident Handling Process
-- Incident Analysis and Response
-- Skills Assessment
+- [Introduction](#introduction)
+- [The Incident Handling Process](#the-incident-handling-process)
+- [Incident Analysis and Response](#incident-analysis-and-response)
+- [Skills Assessment](#skills-assessment)
 
 # Introduction
 
