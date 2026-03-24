@@ -25,10 +25,10 @@ A firm grasp of the following modules can be considered prerequisites for succes
 
 # Sections 
 
-- SIEM & SOC Fundamentals
-- SIEM Visualization Development
-- Alert Triaging
-- Skills Assessment
+- [SIEM & SOC Fundamentals](#siem--soc-fundamentals)
+- [SIEM Visualization Development](#siem-visualization-development)
+- [Alert Triaging](#alert-triaging)
+- [Skills Assessment](#skills-assessment)
 
 # SIEM & SOC Fundamentals
 
