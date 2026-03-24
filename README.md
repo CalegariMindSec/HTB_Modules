@@ -20,6 +20,7 @@ My repo for HTB academy modules.
 ### SOC Analyst (CDSA - HTB Certified Defensive Security Analyst)
 
 1. [Incident Handling Process](job_role_paths/soc_analyst/incident_handling_process)
+1. [Security Monitoring & SIEM Fundamentals](security_monitoring_SIEM_fundamentals)
 
 ### Active Directory Penetration Tester (CAPE - HTB Certified Active Directory Pentesting Expert)
 
