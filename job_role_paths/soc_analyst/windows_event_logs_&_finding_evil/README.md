@@ -39,7 +39,7 @@ A firm grasp of the following modules can be considered prerequisites for succes
 
 # Sections 
 
-- Introduction
+- [Introduction]()
 - Additional Telemetry Sources
 - Analyzing Windows Event Logs En Masse
 - Skills Assessment
