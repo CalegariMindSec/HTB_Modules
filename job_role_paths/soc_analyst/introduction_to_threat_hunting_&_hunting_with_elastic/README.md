@@ -29,7 +29,7 @@ A firm grasp of the following modules can be considered prerequisites for succes
 
 - [Threat Hunting & Threat Intelligence Fundamentals](#threat-hunting--threat-intelligence-fundamentals)
 - [Threat Hunting With The Elastic Stack](#threat-hunting-with-the-elastic-stack)
-- Let's Go Hunting
+- [Let's Go Hunting](#lets-go-hunting)
 
 # Threat Hunting & Threat Intelligence Fundamentals
 
@@ -713,7 +713,7 @@ Recently uncovered details shed light on the operational strategy of Stuxbot's n
 
 ------
 
-## The Available Data
+### The Available Data
 
 The cybersecurity strategy implemented is predicated on the utilization of  the Elastic stack as a SIEM solution. Through the "Discover"  functionality we can see logs from multiple sources. These sources  include:
 
@@ -724,7 +724,7 @@ The cybersecurity strategy implemented is predicated on the utilization of  the 
 
 ------
 
-## The Tasks
+### The Tasks
 
 Navigate to the bottom of this section and click on `Click here to spawn the target system!`
 
