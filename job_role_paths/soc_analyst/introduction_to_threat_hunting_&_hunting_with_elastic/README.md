@@ -27,8 +27,8 @@ A firm grasp of the following modules can be considered prerequisites for succes
 
 # Sections 
 
-- Threat Hunting & Threat Intelligence Fundamentals
-- Threat Hunting With The Elastic Stack
+- [Threat Hunting & Threat Intelligence Fundamentals](#threat-hunting--threat-intelligence-fundamentals)
+- [Threat Hunting With The Elastic Stack](#threat-hunting-with-the-elastic-stack)
 - Let's Go Hunting
 
 # Threat Hunting & Threat Intelligence Fundamentals
@@ -699,7 +699,7 @@ At this stage, we have amassed a significant amount of information to  present a
 
 > **Answer:** PowerView
 
-# Skills Assessment
+# Let's Go Hunting
 
 ## Skills Assessment
 
