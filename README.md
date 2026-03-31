@@ -22,6 +22,7 @@ My repo for HTB academy modules.
 1. [Incident Handling Process](job_role_paths/soc_analyst/incident_handling_process)
 1. [Security Monitoring & SIEM Fundamentals](job_role_paths/soc_analyst/security_monitoring_SIEM_fundamentals)
 1. [Windows Event Logs & Finding Evil](job_role_paths/soc_analyst/windows_event_logs\_&\_finding_evil)
+1. Introduction to Threat Hunting & Hunting With Elastic(introduction_to_threat_hunting\_&\_hunting_with_elastic)
 
 ### Active Directory Penetration Tester (CAPE - HTB Certified Active Directory Pentesting Expert)
 
