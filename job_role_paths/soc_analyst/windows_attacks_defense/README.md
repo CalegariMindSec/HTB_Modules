@@ -43,9 +43,9 @@ A firm grasp of the following modules can be considered prerequisites for succes
 
 # Sections 
 
-- Setting the stage
-- Attacks & Defense
-- Skills Assessment
+- [Setting the stage](#setting-the-stage)
+- [Attacks & Defense](#attacks--defense)
+- [Skills Assessment](#skills-assessment)
 
 # Setting the stage
 
