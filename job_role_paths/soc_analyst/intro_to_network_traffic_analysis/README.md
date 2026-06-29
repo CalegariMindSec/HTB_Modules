@@ -47,10 +47,10 @@ A firm grasp of the following modules can be considered prerequisites for succes
 
 # Sections
 
-- Introduction
-- Analysis
-- Tcpdump
-- Wireshark
+- [Introduction](#introduction)
+- [Analysis](#analysis)
+- [Tcpdump](#tcpdump)
+- [Wireshark](#wireshark)
 
 # Introduction
 
