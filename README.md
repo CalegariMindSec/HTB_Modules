@@ -25,6 +25,7 @@ My repo for HTB academy modules.
 1. [Introduction to Threat Hunting & Hunting With Elastic](job_role_paths/soc_analyst/introduction_to_threat_hunting\_&\_hunting_with_elastic)
 1. Understanding Log Sources & Investigating with Splunk
 1. [Windows Attacks & Defense](job_role_paths/soc_analyst/windows_attacks_defense)
+1. [Intro to Network Traffic Analysis](job_role_paths/soc_analyst/intro_to_network_traffic_analysis)
 
 ### Active Directory Penetration Tester (CAPE - HTB Certified Active Directory Pentesting Expert)
 
