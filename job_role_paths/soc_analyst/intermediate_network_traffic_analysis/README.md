@@ -48,11 +48,11 @@ A firm grasp of the following modules can be considered prerequisites for succes
 
 # Sections
 
-- Introduction
-- Link Layer Attacks
-- Detecting Network Abnormalities
-- Application Layer Attacks
-- Skills Assessment
+- [Introduction](#introduction)
+- [Link Layer Attacks](#link-layer-attacks)
+- [Detecting Network Abnormalities](#detecting-network-abnormalities)
+- [Application Layer Attacks](#application-layer-attacks)
+- [Skills Assessment](#skills-assessment)
 
 # Introduction
 
