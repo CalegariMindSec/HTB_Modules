@@ -36,9 +36,9 @@ A firm grasp of the following modules can be considered prerequisites for succes
 
 ## Sections
 
-- Splunk Fundamentals
-- Investigating With Splunk
-- Skills Assessment
+- [Splunk Fundamentals](#splunk-fundamentals)
+- [Investigating With Splunk](#investigating-with-splunk)
+- [Skills Assessment](#skills-assessment)
 
 **NOTA:** **Revisar pelo HTB, pois a formatação do módulo está quebrada.**
 
@@ -1658,7 +1658,7 @@ Now, navigate to `http://[Target IP]:8000`, open the `Search & Reporting` applic
 > | stats count as thread_count by SourceImage, TargetImage
 > | sort - thread_count
 
-## Skills Assessment
+# Skills Assessment
 
 Scenario
 
