@@ -23,7 +23,7 @@ My repo for HTB academy modules.
 1. [Security Monitoring & SIEM Fundamentals](job_role_paths/soc_analyst/security_monitoring_SIEM_fundamentals)
 1. [Windows Event Logs & Finding Evil](job_role_paths/soc_analyst/windows_event_logs\_&\_finding_evil)
 1. [Introduction to Threat Hunting & Hunting With Elastic](job_role_paths/soc_analyst/introduction_to_threat_hunting\_&\_hunting_with_elastic)
-1. Understanding Log Sources & Investigating with Splunk(understanding_log_sources_investigating_with_splunk)
+1. [Understanding Log Sources & Investigating with Splunk](job_role_paths/soc_analyst/understanding_log_sources_investigating_with_splunk)
 1. [Windows Attacks & Defense](job_role_paths/soc_analyst/windows_attacks_defense)
 1. [Intro to Network Traffic Analysis](job_role_paths/soc_analyst/intro_to_network_traffic_analysis)
 1. [Intermediate Network Traffic Analysis](job_role_paths/soc_analyst/intermediate_network_traffic_analysis)
