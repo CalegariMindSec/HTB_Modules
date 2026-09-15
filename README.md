@@ -27,6 +27,13 @@ My repo for HTB academy modules.
 1. [Windows Attacks & Defense](job_role_paths/soc_analyst/windows_attacks_defense)
 1. [Intro to Network Traffic Analysis](job_role_paths/soc_analyst/intro_to_network_traffic_analysis)
 1. [Intermediate Network Traffic Analysis](job_role_paths/soc_analyst/intermediate_network_traffic_analysis)
+1. Working with IDS/IPS(working_with_IDS_IPS)
+1.  
+1.  
+1.  
+1.  
+1.  
+1.  
 
 ### Active Directory Penetration Tester (CAPE - HTB Certified Active Directory Pentesting Expert)
 
