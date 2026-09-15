@@ -32,11 +32,11 @@ A firm grasp of the following modules can be considered prerequisites for succes
 
 # Sections 
 
-- Introduction
-- Suricata
-- Snort
-- Zeek
-- Skills Assessment
+- [Introduction](#introduction)
+- [Suricata](#suricata)
+- [Snort](#snort)
+- [Zeek](#zeek)
+- [Skills Assessment](#skills-assessment)
 
 # Introduction
 
